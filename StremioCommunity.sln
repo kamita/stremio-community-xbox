@@ -1,0 +1,26 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StremioCommunity", "StremioCommunity\StremioCommunity.csproj", "{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}.Debug|x64.ActiveCfg = Debug|x64
+		{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}.Debug|x64.Build.0 = Debug|x64
+		{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}.Debug|x64.Deploy.0 = Debug|x64
+		{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}.Release|x64.ActiveCfg = Release|x64
+		{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}.Release|x64.Build.0 = Release|x64
+		{7A6C3D21-9F4E-4B1A-8C2D-3E5F6A7B8C9D}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8D9C3E2-71F0-4A6B-9C5D-2E4F6A8B0C12}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,14 @@
+# Build output
+bin/
+obj/
+AppPackages/
+
+# VS / Rider
+.vs/
+*.user
+*_TemporaryKey.pfx
+*.suo
+
+# Build tooling temp
+_*.log
+_*.txt
