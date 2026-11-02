@@ -12,7 +12,9 @@
         <TextBox x:Name="ProxyText" Opacity="0" Width="2" Height="2" MinWidth="0" MinHeight="0" Padding="0"
                  HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" IsTabStop="False" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
 
-        <!-- The app's own cursor (left stick moves, A clicks, right stick scrolls); drawn over the page. -->
+        <!-- The app's own cursor (left stick moves, A clicks, right stick scrolls). Drawn as XAML
+             above the WebView. (todo.md #1: Xbox locks non-game app UI to a ~30 Hz frame rate, which
+             caps any in-app cursor at ~30 fps — see MainPage.xaml.cs.) -->
         <Canvas x:Name="CursorLayer" IsHitTestVisible="False" Visibility="Collapsed">
             <Ellipse x:Name="CursorDot" Width="28" Height="28" Fill="#B3FFFFFF" Stroke="#7B5BF5" StrokeThickness="3" />
         </Canvas>

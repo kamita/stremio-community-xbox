@@ -93,13 +93,17 @@ namespace StremioCommunity
         // 1.0 means 1 DIP == 1 CSS px; on high-DPI Xbox consoles this can differ and throws clicks off.
         private double _cssPerDipX = 1;
         private double _cssPerDipY = 1;
-        private int _lastCursorMove;
+        // Timestamp of the last cursor move, for delta-time integration (todo.md #1).
+        private int _lastCursorMoveMs;
+        private bool _cursorMoveSeeded;
         private double _pendingScroll;
         private int _lastBackTick = Environment.TickCount - 1000;
         private bool _pageAtHome = true; // From shell.js route messages.
         private long _lastCacheBytes;
         private int _audioMenuIndex; // Highlighted row in the audio track menu.
+        private int _audioTrackCount; // Number of audio track rows (before the Volume value row).
         private int _subtitleMenuIndex; // Highlighted row in the subtitle menu (0 = "off").
+        private int _subtitleTrackCount; // Number of subtitle track rows (before the Delay/Speed value rows).
         private int _lastSubtitleSelection; // 0 = off, n = the n-th subtitle track; restored when the menu reopens.
         private string _osdMessage;
         private int _settingsIndex; // Highlighted row in the settings panel.
@@ -416,12 +420,13 @@ namespace StremioCommunity
             }
 
             _gamepad.StickIsCursor = _cursorMode || _systemCursor;
-            CursorLayer.Visibility = _cursorMode && PlayerLayer.Visibility != Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
             PlaceCursor();
         }
 
         private void PlaceCursor()
         {
+            var visible = _cursorMode && PlayerLayer.Visibility != Visibility.Visible;
+            CursorLayer.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
             Canvas.SetLeft(CursorDot, _cursorX - (CursorDot.Width / 2));
             Canvas.SetTop(CursorDot, _cursorY - (CursorDot.Height / 2));
         }
@@ -429,13 +434,14 @@ namespace StremioCommunity
         private void OnPadPolled(Windows.Gaming.Input.GamepadReading reading)
         {
             // Hidden while the native player is up; frozen while the debug log or a text dialog is open.
-            var visible = _cursorMode && PlayerLayer.Visibility != Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
+            var wantVisible = _cursorMode && PlayerLayer.Visibility != Visibility.Visible;
+            var visible = wantVisible ? Visibility.Visible : Visibility.Collapsed;
             if (CursorLayer.Visibility != visible)
             {
                 CursorLayer.Visibility = visible;
             }
 
-            var active = visible == Visibility.Visible && !_keyboardVisible && DebugPanel.Visibility != Visibility.Visible;
+            var active = wantVisible && !_keyboardVisible && DebugPanel.Visibility != Visibility.Visible;
 
             if (!active)
             {
@@ -443,21 +449,29 @@ namespace StremioCommunity
             }
 
             // Left stick: speed grows with the square of the deflection (fine aim near the centre).
+            // Movement is integrated with the REAL elapsed time since the last tick (delta-time), so the
+            // cursor travels the same distance per second at 30 fps as at 60 fps (todo.md #1). The
+            // reference rate is 60 Hz (16.67 ms/tick), matching the "1500 DIP/s at full tilt" feel.
             var x = reading.LeftThumbstickX;
             var y = reading.LeftThumbstickY;
             var magnitude = Math.Sqrt((x * x) + (y * y));
             if (magnitude > 0.15)
             {
-                var speed = 1500 * ((magnitude - 0.15) / 0.85) * ((magnitude - 0.15) / 0.85) / 60; // DIPs per poll at full tilt: 25
+                var nowMs = Environment.TickCount;
+                var dtTicks = _cursorMoveSeeded ? (nowMs - _lastCursorMoveMs) : 16;
+                if (dtTicks < 1) dtTicks = 1;
+                if (dtTicks > 100) dtTicks = 100; // clamp after a stall so it doesn't jump
+                _lastCursorMoveMs = nowMs;
+                _cursorMoveSeeded = true;
+
+                var e = (magnitude - 0.15) / 0.85;
+                var dipPerSecond = 1500.0 * e * e;                 // full tilt: 1500 DIP/s
+                var move = dipPerSecond * (dtTicks / 1000.0);
                 var width = RootGrid.ActualWidth > 0 ? RootGrid.ActualWidth : 1920;
                 var height = RootGrid.ActualHeight > 0 ? RootGrid.ActualHeight : 1080;
-                _cursorX = Math.Max(0, Math.Min(width - 1, _cursorX + (x / magnitude * speed)));
-                _cursorY = Math.Max(0, Math.Min(height - 1, _cursorY - (y / magnitude * speed)));
+                _cursorX = Math.Max(0, Math.Min(width - 1, _cursorX + (x / magnitude * move)));
+                _cursorY = Math.Max(0, Math.Min(height - 1, _cursorY - (y / magnitude * move)));
                 PlaceCursor();
-                // NOTE: We do NOT send mouseMoved to the page while the cursor moves. The page would
-                // receive synthetic hover events and could navigate/scroll behind the cursor. The
-                // XAML cursor still moves on screen (PlaceCursor) and the click (A) is dispatched
-                // separately via ClickAtCursor.
             }
 
             // Right stick: wheel scroll at the cursor.
@@ -970,8 +984,11 @@ namespace StremioCommunity
             return Task.FromResult(false);
         }
 
-        // ---- Subtitle timing / speed (todo.md #2) ----
-        // Applies the user's subtitle delay and speed to every subtitle track on the item.
+        // ---- Subtitle timing / speed (todo.md #3) ----
+        // Applies the user's subtitle delay and speed to every subtitle track, then forces the
+        // currently-presented track to re-present so the new values actually take effect. The
+        // SubDelay / SubRate properties are not in the compile-time UWP reference, so they're set
+        // via reflection; this reports clearly when they're absent (so "no effect" is never silent).
         private void ApplySubtitleTimingSpeed(MediaPlayer player)
         {
             try
@@ -982,7 +999,11 @@ namespace StremioCommunity
                 }
 
                 var tracks = item.TimedMetadataTracks;
+                var subtitleCount = 0;
                 var applied = 0;
+                var apiAvailable = true;
+                string firstError = null;
+
                 for (var i = 0; i < tracks.Count; i++)
                 {
                     if (!IsSubtitleTrack(tracks[i]))
@@ -990,14 +1011,19 @@ namespace StremioCommunity
                         continue;
                     }
 
-                    // SubtitleTrack.SubDelay / SubRate are runtime APIs that the 19041 UWP reference
-                    // does not expose at compile time. We reach them via reflection so the call
-                    // still works on Xbox where the type exists at runtime.
+                    subtitleCount++;
+                    var t = tracks[i];
+                    var type = t.GetType();
+                    var delayProp = type.GetProperty("SubDelay");
+                    var rateProp = type.GetProperty("SubRate");
+                    if (delayProp == null && rateProp == null)
+                    {
+                        apiAvailable = false;
+                        continue;
+                    }
+
                     try
                     {
-                        var t = tracks[i];
-                        var delayProp = t.GetType().GetProperty("SubDelay");
-                        var rateProp = t.GetType().GetProperty("SubRate");
                         if (delayProp != null)
                         {
                             delayProp.SetValue(t, TimeSpan.FromSeconds(CommunitySettings.SubtitleDelay));
@@ -1012,23 +1038,67 @@ namespace StremioCommunity
                     }
                     catch (System.Exception ex)
                     {
-                        if (i == 0)
+                        if (firstError == null)
                         {
-                            Log("warn", "Subtitle timing API not available on this Windows version: " + ex.Message);
+                            firstError = ex.Message;
                         }
-
-                        break;
                     }
                 }
 
-                if (applied > 0)
+                // Setting SubDelay/SubRate does not by itself re-render the subtitles; re-present the
+                // active track so the pipeline picks up the new delay/rate (todo.md #3).
+                TryRepresentSubtitleTracks(item);
+
+                if (subtitleCount == 0)
                 {
-                    Log("info", "Subtitle delay " + CommunitySettings.SubtitleDelay + " s / rate " + CommunitySettings.SubtitleRate + "x applied to " + applied + " track(s)");
+                    Log("warn", "Subtitle delay/speed: no subtitle tracks present to adjust");
+                }
+                else if (!apiAvailable)
+                {
+                    Log("warn", "Subtitle delay/speed: SubDelay/SubRate API not available on this Windows version");
+                }
+                else if (firstError != null)
+                {
+                    Log("warn", "Subtitle delay/speed: " + firstError);
+                }
+                else
+                {
+                    Log("info", "Subtitle delay " + CommunitySettings.SubtitleDelay + " s / rate " + CommunitySettings.SubtitleRate + "x applied to " + applied + " of " + subtitleCount + " track(s)");
                 }
             }
             catch (System.Exception ex)
             {
                 Log("warn", "Could not apply subtitle timing/speed: " + ex.Message);
+            }
+        }
+
+        // Toggles the presentation mode of the currently-active subtitle track off then back on,
+        // which forces the renderer to re-apply SubDelay/SubRate after they change. We can't read
+        // PresentationMode (it's write-only in UWP), so we re-present the track the user last
+        // selected (tracked in _lastSubtitleSelection). Best-effort.
+        private void TryRepresentSubtitleTracks(MediaPlaybackItem item)
+        {
+            if (_lastSubtitleSelection <= 0)
+            {
+                return; // Subtitles are off; nothing to re-present.
+            }
+
+            try
+            {
+                var tracks = item.TimedMetadataTracks;
+                var indices = Enumerable.Range(0, tracks.Count).Where(i => IsSubtitleTrack(tracks[i])).ToList();
+                if (_lastSubtitleSelection - 1 >= indices.Count)
+                {
+                    return;
+                }
+
+                var trackIndex = (uint)indices[_lastSubtitleSelection - 1];
+                tracks.SetPresentationMode(trackIndex, TimedMetadataTrackPresentationMode.Disabled);
+                tracks.SetPresentationMode(trackIndex, TimedMetadataTrackPresentationMode.PlatformPresented);
+            }
+            catch (System.Exception)
+            {
+                // Re-presentation is best-effort; the values are already set on the tracks.
             }
         }
 
@@ -1634,13 +1704,29 @@ namespace StremioCommunity
                 return;
             }
 
-            // While the app's cursor owns the controller, consume ALL keyboard input — including
-            // auto-repeat (stick held down = repeated KeyDown events). Xbox translates the left
-            // stick into virtual arrow keys; if we don't mark them handled, the system moves
-            // XAML focus and the Stremio UI scrolls behind the cursor.
+            // While the app's cursor owns the controller:
+            //  - The left stick's arrow keys are ALWAYS blocked — unhandled they move XAML focus
+            //    and scroll the Stremio UI behind the cursor.
+            //  - With the on-screen keyboard UP (typing), every other key is left to the Windows
+            //    input system, which converts it to the correct character (active layout, Shift,
+            //    symbols like @, Caps Lock) and delivers it to the focused text field in WebView2
+            //    — the same mechanism that already works in D-pad mode.
+            //  - With the keyboard DOWN (pure stick navigation), block everything else too, so
+            //    nothing moves behind the cursor.
             if (_cursorMode && PlayerLayer.Visibility != Visibility.Visible)
             {
-                args.Handled = true;
+                if (IsStickNavigationKey(args.VirtualKey))
+                {
+                    args.Handled = true; // Stick arrow: never let through.
+                    return;
+                }
+
+                if (_keyboardVisible)
+                {
+                    return; // Typing: let Windows produce and deliver the correct character.
+                }
+
+                args.Handled = true; // Navigating: swallow the rest.
                 return;
             }
 
@@ -1669,6 +1755,23 @@ namespace StremioCommunity
                     else OpenSettings();
                     args.Handled = true;
                     return;
+            }
+        }
+
+        // The four arrow keys are the ones Xbox translates from the left stick. They must always
+        // be swallowed in cursor mode so the system doesn't move XAML focus behind the cursor.
+        private static bool IsStickNavigationKey(VirtualKey key)
+        {
+            switch (key)
+            {
+                case VirtualKey.Up:
+                case VirtualKey.Down:
+                case VirtualKey.Left:
+                case VirtualKey.Right:
+                    return true;
+
+                default:
+                    return false;
             }
         }
 
@@ -1851,6 +1954,14 @@ namespace StremioCommunity
                     case PadButton.Menu:
                         if (AudioMenu.Visibility == Visibility.Visible) SelectAudioMenu();
                         else SelectSubtitleMenu();
+                        break;
+                    // D-pad Left/Right nudge the highlighted subtitle timing row (todo.md #4):
+                    // Left = decrease, Right = increase. No-op on the audio menu or a track row.
+                    case PadButton.Left:
+                        StepSubtitleValueRow(-1);
+                        break;
+                    case PadButton.Right:
+                        StepSubtitleValueRow(1);
                         break;
                 }
 
@@ -2047,15 +2158,13 @@ namespace StremioCommunity
             // Restore the last selection as the highlighted row (0 = "Subtitles off").
             var current = _lastSubtitleSelection;
 
-            if (labels.Count == 0)
-            {
-                ShowOsd("No subtitles");
-                return;
-            }
-
             var rows = new List<string> { "Subtitles off" };
             rows.AddRange(labels);
-            _subtitleMenuIndex = Math.Min(Math.Max(current, 0), rows.Count - 1);
+            // Adjustable rows at the bottom (todo.md #2/#3): subtitle delay and speed, applied live.
+            rows.Add("Subtitle delay  —  " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+            rows.Add("Subtitle speed  —  " + FormatSubRate(CommunitySettings.SubtitleRate));
+            _subtitleTrackCount = 1 + labels.Count; // rows before the two adjustable rows
+            _subtitleMenuIndex = Math.Min(Math.Max(current, 0), _subtitleTrackCount - 1);
             SubtitleMenuItems.Children.Clear();
             foreach (var row in rows)
             {
@@ -2067,6 +2176,17 @@ namespace StremioCommunity
             SubtitleMenu.Visibility = Visibility.Visible;
             Osd.Visibility = Visibility.Collapsed;
             Log("info", "Subtitle menu: " + labels.Count + " track(s), highlighting row " + _subtitleMenuIndex);
+        }
+
+        private static string FormatSubDelay(double seconds)
+        {
+            var sign = seconds > 0 ? "+" : seconds < 0 ? "-" : "";
+            return sign + Math.Abs(seconds).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " s";
+        }
+
+        private static string FormatSubRate(double rate)
+        {
+            return rate.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "x";
         }
 
         private static TextBlock BuildSubtitleRow(string text)
@@ -2135,6 +2255,34 @@ namespace StremioCommunity
             }
 
             var chosen = _subtitleMenuIndex;
+
+            // The last two rows are the adjustable delay/speed rows (todo.md #2/#3). A steps them
+            // and the menu stays open so the user can keep nudging. Selecting a track row (0..n)
+            // applies and closes, as before.
+            if (chosen >= _subtitleTrackCount)
+            {
+                if (chosen == _subtitleTrackCount)
+                {
+                    // Subtitle delay: step by 0.5 s, wrapping -30 -> +30.
+                    var next = CommunitySettings.SubtitleDelay + 0.5;
+                    if (next > 30) next = -30;
+                    CommunitySettings.SubtitleDelay = next;
+                    ApplySubtitleTimingSpeed(_mediaPlayer);
+                    ShowOsd("Subtitle delay: " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+                }
+                else
+                {
+                    // Subtitle speed: step by 0.05x, wrapping 2.0 -> 0.5.
+                    var next = Math.Round(CommunitySettings.SubtitleRate + 0.05, 2);
+                    if (next > 2.0) next = 0.5;
+                    CommunitySettings.SubtitleRate = next;
+                    ApplySubtitleTimingSpeed(_mediaPlayer);
+                    ShowOsd("Subtitle speed: " + FormatSubRate(CommunitySettings.SubtitleRate));
+                }
+                RebuildSubtitleValueRows();
+                return;
+            }
+
             var label = (SubtitleMenuItems.Children[chosen] as TextBlock)?.Text ?? string.Empty;
             CloseSubtitleMenu();
             _lastSubtitleSelection = chosen;
@@ -2174,6 +2322,67 @@ namespace StremioCommunity
             if (SubtitleMenu.Visibility == Visibility.Visible)
             {
                 SubtitleMenu.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        // D-pad Left/Right (todo.md #4): step the highlighted subtitle timing row by `direction`
+        // (-1 = decrease, +1 = increase) and apply it live. No-op unless a delay/speed row is
+        // highlighted — the A-button path (SelectSubtitleMenu) reuses the same stepping logic.
+        private void StepSubtitleValueRow(int direction)
+        {
+            if (SubtitleMenu.Visibility != Visibility.Visible)
+            {
+                return;
+            }
+
+            var chosen = _subtitleMenuIndex;
+            if (chosen < _subtitleTrackCount)
+            {
+                return; // A track row (or "off") is highlighted; D-pad L/R don't apply to those.
+            }
+
+            if (chosen == _subtitleTrackCount)
+            {
+                // Subtitle delay: step by 0.5 s, wrapping -30 -> +30.
+                var next = CommunitySettings.SubtitleDelay + 0.5 * direction;
+                if (next > 30) next = -30;
+                if (next < -30) next = 30;
+                CommunitySettings.SubtitleDelay = Math.Round(next, 2);
+                ApplySubtitleTimingSpeed(_mediaPlayer);
+                ShowOsd("Subtitle delay: " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+            }
+            else
+            {
+                // Subtitle speed: step by 0.05x, wrapping 2.0 -> 0.5.
+                var next = Math.Round(CommunitySettings.SubtitleRate + 0.05 * direction, 2);
+                if (next > 2.0) next = 0.5;
+                if (next < 0.5) next = 2.0;
+                CommunitySettings.SubtitleRate = next;
+                ApplySubtitleTimingSpeed(_mediaPlayer);
+                ShowOsd("Subtitle speed: " + FormatSubRate(CommunitySettings.SubtitleRate));
+            }
+            RebuildSubtitleValueRows();
+        }
+
+        // Rebuilds the two adjustable rows (delay/speed) in place after a step, keeping highlight.
+        private void RebuildSubtitleValueRows()
+        {
+            var children = SubtitleMenuItems.Children;
+            if (children.Count > _subtitleTrackCount)
+            {
+                var delayRow = children[_subtitleTrackCount] as TextBlock;
+                if (delayRow != null)
+                {
+                    delayRow.Text = "Subtitle delay  —  " + FormatSubDelay(CommunitySettings.SubtitleDelay);
+                }
+            }
+            if (children.Count > _subtitleTrackCount + 1)
+            {
+                var rateRow = children[_subtitleTrackCount + 1] as TextBlock;
+                if (rateRow != null)
+                {
+                    rateRow.Text = "Subtitle speed  —  " + FormatSubRate(CommunitySettings.SubtitleRate);
+                }
             }
         }
 
@@ -2219,12 +2428,15 @@ namespace StremioCommunity
                 // Leave current at 0.
             }
 
+            _audioTrackCount = labels.Count;
             _audioMenuIndex = current;
             AudioMenuItems.Children.Clear();
             foreach (var label in labels)
             {
                 AudioMenuItems.Children.Add(BuildAudioRow(label));
             }
+            // NOTE (todo.md #2): the adjustable Volume row was removed — this menu now lists only
+            // the audio tracks.
             ApplyAudioMenuHighlight();
 
             _osdTimer?.Stop();
@@ -2472,7 +2684,8 @@ namespace StremioCommunity
             "pauseMin", "pauseFocus",
             "zoom", "connections", "restartSeek",
             "resume", "autoContinue", "bufferMb", "hdrQuality",
-            "subDelay", "subRate",
+            // NOTE: subDelay / subRate were removed from this panel (todo.md #3) — they now live
+            // only in the player's Subtitle menu (OpenSubtitleMenu), where they apply live.
         };
 
         private SettingRow CurrentRow(int index)
@@ -2504,10 +2717,8 @@ namespace StremioCommunity
                     return new SettingRow { Kind = "cycle", Key = key, Title = "Debrid buffer", CycleValues = BufferMbSteps, CycleIndex = CommunitySettings.BufferMbIndex };
                 case "hdrQuality":
                     return new SettingRow { Kind = "cycle", Key = key, Title = "HDR quality", CycleValues = HdrQualitySteps, CycleIndex = CommunitySettings.HdrQualityMode };
-                case "subDelay":
-                    return new SettingRow { Kind = "number", Key = key, Title = "Subtitle delay", Value = CommunitySettings.SubtitleDelay, Min = -30, Max = 30, Step = 0.5, Unit = "s" };
-                case "subRate":
-                    return new SettingRow { Kind = "number", Key = key, Title = "Subtitle speed", Value = CommunitySettings.SubtitleRate, Min = 0.5, Max = 2.0, Step = 0.05, Unit = "x" };
+                // subDelay / subRate intentionally removed from the settings panel (todo.md #3):
+                // they now live only in the player's Subtitle menu (OpenSubtitleMenu).
                 default:
                     return null;
             }

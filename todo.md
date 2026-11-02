@@ -1,3 +1,2 @@
-1. El cursor funciona a 30 fps al parecer, ¿se puede subir a 60 fps?
-2. Añadir más filas al menú (pistas de audio y subtítulos) los cuales sólo aparecen dentro del reproductor.
-3. Las opciones de ajustar los tiempos y velocidad de los subtítulos sólo deben aparecer dentro del reproductor.
+1. Tengo un control remoto "8bitdo remote for xbox" y al usarlo en la app no hace nada y el log muestra mensajes "WARN web: INPUT keyup | key=Unidentified core= trusted=true target=BODY".
+2. Se deben guardar los cambios que se hacen en la sesión, como si está habilitado o no el cursor.
