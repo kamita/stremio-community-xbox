@@ -1869,29 +1869,40 @@ namespace StremioCommunity
                 return; // auto-repeat is noise in every mode; ignore.
             }
 
-            // 8BitDo face buttons (todo #4): A/X/Y/Start/Select map to the same PadButton as
-            // the Xbox gamepad. B is not a PadButton (Xbox routes it through BackRequested), so
-            // it calls HandleBack directly.
+            // Gamepad buttons arriving as accelerator keys (round 4 #1, final). The Xbox log
+            // proves the 8BitDo's buttons reach the app as accelerator keys in the 0xC0-0xDF
+            // range (vk=0xC3/0xC5/0xD0, sc=0) AND that the same event also leaks to the Stremio
+            // page as a click ("web: INPUT click"), which Stremio's own keyboard handlers turn
+            // into a second action — the "opens and closes instantly" symptom.
             //
-            // KEY (round 4 #1, final): these VKs (0xC0–0xDF) are Windows' RESERVED gamepad
-            // virtual-key range. A real XInput gamepad (Xbox controller OR the 8BitDo, which is
-            // an Xbox-compatible gamepad) is ALREADY handled authoritatively by
-            // GamepadInput.Poll(). When such a gamepad is connected, the SAME physical button
-            // also surfaces here as an accelerator key with these codes — mapping it too is what
-            // caused the double-fire. So we only apply this mapping when NO XInput gamepad is
-            // connected (i.e. the 8BitDo is acting as a keyboard HID device). This is a
-            // connection check, not a timing guess, so it is immune to event ordering.
-            if (!GamepadConnected())
+            // The fix is three-part and robust to whether a button also comes through
+            // GamepadInput (XInput) at the same time:
+            //  1. Dispatch the known button codes from this (accelerator-key) path, because the
+            //     log shows this path ALWAYS fires (whereas XInput did not log on the Xbox).
+            //  2. Mark args.Handled = true so the event NEVER leaks to the WebView2 page.
+            //  3. Dedup in HandlePadButton (the single chokepoint) so if the SAME button also
+            //     arrives via GamepadInput within the debounce window, only one action fires.
+            // Unknown codes in the 0xC0-0xDF range (sticks, shoulders, etc.) are still marked
+            // Handled so they can't leak to the page either; those are handled by GamepadInput.
+            var vk = (int)args.VirtualKey;
+            if (vk >= 0xC0 && vk <= 0xDF)
             {
                 switch (args.VirtualKey)
                 {
-                    case (VirtualKey)0xC3: HandlePadButton(PadButton.A); args.Handled = true; return;
-                    case (VirtualKey)0xC4: HandleBack(); args.Handled = true; return;
-                    case (VirtualKey)0xC5: HandlePadButton(PadButton.X); args.Handled = true; return;
-                    case (VirtualKey)0xC6: HandlePadButton(PadButton.Y); args.Handled = true; return;
-                    case (VirtualKey)0xCF: HandlePadButton(PadButton.Menu); args.Handled = true; return; // Start
-                    case (VirtualKey)0xD0: HandlePadButton(PadButton.Share); args.Handled = true; return; // Select
+                    case (VirtualKey)0xC3: HandlePadButton(PadButton.A); break;
+                    case (VirtualKey)0xC4: HandleBack(); break;
+                    case (VirtualKey)0xC5: HandlePadButton(PadButton.X); break;
+                    case (VirtualKey)0xC6: HandlePadButton(PadButton.Y); break;
+                    case (VirtualKey)0xCB: HandlePadButton(PadButton.Up); break;
+                    case (VirtualKey)0xCC: HandlePadButton(PadButton.Down); break;
+                    case (VirtualKey)0xCD: HandlePadButton(PadButton.Left); break;
+                    case (VirtualKey)0xCE: HandlePadButton(PadButton.Right); break;
+                    case (VirtualKey)0xCF: HandlePadButton(PadButton.Menu); break; // Start
+                    case (VirtualKey)0xD0: HandlePadButton(PadButton.Share); break; // Select
+                    default: break; // sticks/shoulders/etc. → GamepadInput owns those.
                 }
+                args.Handled = true; // Never let a gamepad VK reach the Stremio page.
+                return;
             }
 
             // While the app's cursor owns the controller:
@@ -1920,21 +1931,10 @@ namespace StremioCommunity
                 return;
             }
 
-            // 8BitDo remote D-pad (todo #4): Up/Down/Left/Right. These arrive AFTER the
-            // cursor-mode branch, so in cursor mode they're correctly swallowed (the left
-            // stick owns arrow navigation). In normal (D-pad) mode they navigate menus.
-            // Same connection guard as the face buttons: 0xCB-0xCE are in the gamepad VK range,
-            // so a connected gamepad already handles them via GamepadInput.
-            if (!GamepadConnected())
-            {
-                switch (args.VirtualKey)
-                {
-                    case (VirtualKey)0xCB: HandlePadButton(PadButton.Up); args.Handled = true; return;
-                    case (VirtualKey)0xCC: HandlePadButton(PadButton.Down); args.Handled = true; return;
-                    case (VirtualKey)0xCD: HandlePadButton(PadButton.Left); args.Handled = true; return;
-                    case (VirtualKey)0xCE: HandlePadButton(PadButton.Right); args.Handled = true; return;
-                }
-            }
+            // NOTE: the old 8BitDo D-pad accelerator mapping (0xCB-0xCE) was removed with the
+            // face-button mapping. Those codes are now caught by the 0xC0-0xDF range block
+            // above (which marks them Handled so they never reach the page) and are otherwise
+            // dispatched by GamepadInput, the single authoritative input path.
 
             // F-keys are our shortcuts regardless of mode.
             switch (args.VirtualKey)
@@ -2008,7 +2008,15 @@ namespace StremioCommunity
                 return; // The Xbox keyboard takes the controller.
             }
 
+            // TRACE (double-fire diagnosis): the XInput gamepad path firing.
+            Log("info", "SRC xinput btn=" + button + " pads=" + SafePadCount());
             HandlePadButton(button);
+        }
+
+        private static int SafePadCount()
+        {
+            try { return Windows.Gaming.Input.Gamepad.Gamepads.Count; }
+            catch (System.Exception) { return -1; }
         }
 
         // True if any XInput gamepad is currently connected. A real Xbox controller and the
@@ -2029,8 +2037,27 @@ namespace StremioCommunity
             }
         }
 
+        // Dedup state for HandlePadButton: prevents the same button from firing twice when it
+        // arrives via two input paths (XInput + accelerator-key) within the debounce window.
+        private PadButton _lastPadBtn;
+        private int _lastPadBtnMs;
+
         private void HandlePadButton(PadButton button)
         {
+            // Deduplication (round 4 #1): if the same button was dispatched via another input
+            // path (GamepadInput, or the accelerator-key path itself with a delayed repeat) within
+            // the last 200 ms, this is the SAME physical press — skip it. 200 ms is long enough
+            // to catch XInput+accelerator-key racing (both fire within 1-2 frames of each other)
+            // but short enough to not block a genuine second press (minimum human re-press
+            // interval is ~80-100 ms, and users press buttons deliberately, not at machine speed).
+            var nowMs = Environment.TickCount;
+            if (_lastPadBtn == button && unchecked(nowMs - _lastPadBtnMs) < 200)
+            {
+                return;
+            }
+            _lastPadBtn = button;
+            _lastPadBtnMs = nowMs;
+
             // The settings panel owns the controller while open (opened with Y while browsing).
             if (SettingsPanel.Visibility == Visibility.Visible)
             {

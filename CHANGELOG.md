@@ -57,18 +57,19 @@
 
 ### Fixed
 
-- **8BitDo buttons no longer double-fire (todo round 4 #1, final fix):** the real cause was not
-  auto-repeat (the `WasKeyDown` filter was a red herring), and it was not a timing issue either.
-  The VKs in use (0xC0–0xDF) are Windows' RESERVED gamepad virtual-key range: a real XInput
-  gamepad (the Xbox controller AND the 8BitDo, which is an Xbox-compatible gamepad) is already
-  handled authoritatively by `GamepadInput.Poll()`, but the SAME physical button also surfaces as
-  an accelerator key with these codes, so the previous 8BitDo mapping re-dispatched every press a
-  second time. A time-window guard (skip if a gamepad fired within 50 ms) was tried and failed
-  because the accelerator-key event often arrives BEFORE the 60 Hz gamepad poll. The final fix is a
-  CONNECTION check: `GamepadConnected()` (`Gamepad.Gamepads.Count > 0`). The 0xC0–0xDF mapping in
-  `OnAcceleratorKeyActivated` is now applied only when NO XInput gamepad is connected — i.e. the
-  8BitDo acting as a keyboard HID device. When any gamepad is connected (the normal case) it is the
-  single source of truth and the accelerator-key path no longer touches those codes.
+- **8BitDo buttons no longer double-fire (todo round 4 #1, final fix):** diagnosed from the
+  Xbox's own `session.log`. Each button press logged as an accelerator key in Windows' RESERVED
+  gamepad range (`vk=0xC3/0xC5/0xD0`, `sc=0`) and — decisively — the SAME press also produced a
+  `web: INPUT click` on the Stremio page a few ms later, plus a second in-app toggle 20 ms after
+  the first (e.g. "Cursor off" then "Cursor on"). Two root causes: (1) the unhandled
+  accelerator-key event leaked through to WebView2, where Stremio's own keyboard handlers acted on
+  it (a click/activate), and (2) the same button could also arrive via the gamepad poll, firing
+  twice. Fix: `OnAcceleratorKeyActivated` now catches the whole 0xC0–0xDF range, dispatches the
+  known button codes to the normal handlers, and **marks `args.Handled = true`** so no gamepad VK
+  ever reaches the page (unknown codes in the range — sticks/shoulders — are also swallowed; those
+  remain `GamepadInput`'s job). A 200 ms per-button debounce in `HandlePadButton` (the single
+  chokepoint) absorbs any remaining same-press double delivery from the two input paths without
+  blocking a deliberate second press.
 - **Preferred subtitle language actually applies now (todo round 4 #2):**
   `ApplyPreferredLanguageTracks` and `ApplySubtitleTimingSpeed` were called in `OnMediaOpened`,
   which fires BEFORE the external `TimedTextSource` tracks have finished resolving (they're
