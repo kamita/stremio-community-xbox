@@ -1869,6 +1869,8 @@ namespace StremioCommunity
                 case (VirtualKey)0xC4: HandleBack(); args.Handled = true; return;
                 case (VirtualKey)0xC5: HandlePadButton(PadButton.X); args.Handled = true; return;
                 case (VirtualKey)0xC6: HandlePadButton(PadButton.Y); args.Handled = true; return;
+                case (VirtualKey)0xCF: HandlePadButton(PadButton.Menu); args.Handled = true; return; // Start
+                case (VirtualKey)0xD0: HandlePadButton(PadButton.Share); args.Handled = true; return; // Select
             }
 
             // While the app's cursor owns the controller:

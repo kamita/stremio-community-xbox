@@ -17,6 +17,7 @@ namespace StremioCommunity.Core
         Y,
         View,
         Menu,
+        Share, // Xbox Share; today a no-op in-app, kept so remotes (e.g. 8BitDo Select) can map to it.
         LeftShoulder,
         RightShoulder,
         LeftStick, // Stick click: toggles the app's cursor.

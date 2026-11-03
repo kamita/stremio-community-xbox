@@ -11,15 +11,18 @@
   truth, so the row the user highlights is the row that gets selected, and `_lastSubtitleSelection`
   stays consistent across reopenings.
 - **8BitDo remote mapping (todo #4):** the user-captured `VirtualKey` codes (A = 0xC3, B = 0xC4,
-  X = 0xC5, Y = 0xC6, D-pad Up/Down/Left/Right = 0xCB-0xCE) are now mapped to the same
-  `PadButton` actions the Xbox gamepad uses. Face buttons (A/X/Y) are handled **before** the
-  cursor-mode branch so they work in all modes (including cursor + keyboard up). B calls
-  `HandleBack()` directly (it is not a `PadButton`; the Xbox routes it through `BackRequested`).
-  The D-pad arrows are handled **after** the cursor-mode branch, so in cursor mode they are
-  correctly swallowed (the Xbox left stick owns arrow navigation), while in normal D-pad mode
-  they navigate menus as expected. A new `HandlePadButton` method holds the full button
-  dispatch logic; the original `OnPadButton` remains as the Xbox gamepad entry point with the
-  `_keyboardVisible` guard (the 8BitDo bypasses it, as its keys don't produce printable characters).
+  X = 0xC5, Y = 0xC6, D-pad Up/Down/Left/Right = 0xCB-0xCE, Start = 0xCF, Select = 0xD0) are now
+  mapped to the same `PadButton` actions the Xbox gamepad uses. Start maps to `Menu` (cycles
+  `restartSeek` in the debug panel); Select maps to the new `PadButton.Share` (currently a no-op
+  in-app, kept so the mapping is registered and can grow a real action later). Face buttons
+  (A/X/Y) are handled **before** the cursor-mode branch so they work in all modes (including
+  cursor + keyboard up). B calls `HandleBack()` directly (it is not a `PadButton`; the Xbox
+  routes it through `BackRequested`). The D-pad arrows are handled **after** the cursor-mode
+  branch, so in cursor mode they're correctly swallowed (the Xbox left stick owns arrow
+  navigation), while in normal D-pad mode they navigate menus as expected. A new `HandlePadButton`
+  method holds the full button dispatch logic; the original `OnPadButton` remains as the Xbox
+  gamepad entry point with the `_keyboardVisible` guard (the 8BitDo bypasses it, as its keys
+  don't produce printable characters).
 - **Preferred audio / subtitle language (todo #1):** two new settings rows — "Audio language"
   and "Subtitle language" — let the user pick a default language for each. On every video open
   (in `OnMediaOpened`), `ApplyPreferredLanguageTracks` scans the available tracks and auto-selects
