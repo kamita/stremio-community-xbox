@@ -57,13 +57,17 @@
 
 ### Fixed
 
-- **8BitDo buttons no longer double-fire (todo round 4 #1):** the face-buttons block
-  (A/B/X/Y/Start/Select) in `OnAcceleratorKeyActivated` was placed BEFORE the
-  `args.KeyStatus.WasKeyDown` check. Windows re-dispatches `KeyDown` every ~30 ms while a key
-  is held (auto-repeat), and without the filter each repeat re-invoked `HandlePadButton` —
-  so a single press of A in the player would toggle play/pause twice, or a held D-pad arrow
-  would seek by 20 s instead of 10 s. The `WasKeyDown` early-return is now placed before
-  the face-buttons switch, shared by all 8BitDo paths.
+- **8BitDo buttons no longer double-fire (todo round 4 #1, final fix):** the real cause was not
+  auto-repeat (the previous `WasKeyDown` filter was a red herring). Windows generates accelerator-key
+  events for BOTH the Xbox controller (XInput → Windows keyboard) and the 8BitDo (HID → Windows
+  keyboard), using the SAME `VirtualKey` codes (A = 0xC3, B = 0xC4, X = 0xC5, Y = 0xC6, D-pad =
+  0xCB-0xCE, Start = 0xCF, Select = 0xD0). The previous 8BitDo mapping therefore also caught the
+  Xbox's own accelerator-key events, dispatching every physical press twice — once through
+  `GamepadInput.Poll()` and again through `OnAcceleratorKeyActivated`. Fix: `OnPadButton` stamps
+  `_lastGamepadFireMs` on every XInput fire; `OnAcceleratorKeyActivated` now skips the 8BitDo
+  mapping (face buttons and D-pad) if a gamepad fired within the last 50 ms, so the Xbox press is
+  dispatched exactly once. The 8BitDo is unaffected: when it's the only input device no gamepad
+  fires, so its keys always pass the guard.
 - **Preferred subtitle language actually applies now (todo round 4 #2):**
   `ApplyPreferredLanguageTracks` and `ApplySubtitleTimingSpeed` were called in `OnMediaOpened`,
   which fires BEFORE the external `TimedTextSource` tracks have finished resolving (they're
