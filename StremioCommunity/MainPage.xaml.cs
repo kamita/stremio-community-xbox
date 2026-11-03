@@ -1041,9 +1041,12 @@ namespace StremioCommunity
                     }
                 }
 
-                // Setting SubDelay/SubRate does not by itself re-render the subtitles; re-present the
-                // active track so the pipeline picks up the new delay/rate (todo.md #3).
-                TryRepresentSubtitleTracks(item);
+                // NOTE (todo #3): previously we toggled the active track off->on here to "force"
+                // the renderer to pick up the new SubDelay/SubRate. That toggle opened a window
+                // where no subtitle track was presented, and Windows re-selected the first track —
+                // so subtitles visibly disappeared when the user stepped delay/speed. The renderer
+                // reads SubDelay/SubRate continuously at render time, so no re-presentation is
+                // needed; the values apply on the very next frame.
 
                 if (subtitleCount == 0)
                 {
@@ -1068,34 +1071,42 @@ namespace StremioCommunity
             }
         }
 
-        // Toggles the presentation mode of the currently-active subtitle track off then back on,
-        // which forces the renderer to re-apply SubDelay/SubRate after they change. We can't read
-        // PresentationMode (it's write-only in UWP), so we re-present the track the user last
-        // selected (tracked in _lastSubtitleSelection). Best-effort.
-        private void TryRepresentSubtitleTracks(MediaPlaybackItem item)
+        // NOTE (todo #3): the previous TryRepresentSubtitleTracks (off→on toggle) was REMOVED.
+        // It opened a zero-track-presentation window where Windows re-selected the first track,
+        // making subtitles visibly disappear when the user stepped delay/speed. SubDelay/SubRate
+        // are read by the renderer at render time on each frame, so no re-presentation is needed.
+
+        // ---- Subtitle track ordering (todo #1) -------------------------------------------------------
+        // Returns the indices of subtitle tracks in `item`, sorted by Language (ascending),
+        // then by Label. Every caller (menu, auto-select, log) uses this single ordered list so
+        // that _lastSubtitleSelection is always consistent with what the user sees.
+        private static List<int> GetOrderedSubtitleTrackIndices(MediaPlaybackItem item)
         {
-            if (_lastSubtitleSelection <= 0)
+            var tracks = item.TimedMetadataTracks;
+            var indices = new List<int>();
+            for (var i = 0; i < tracks.Count; i++)
             {
-                return; // Subtitles are off; nothing to re-present.
-            }
-
-            try
-            {
-                var tracks = item.TimedMetadataTracks;
-                var indices = Enumerable.Range(0, tracks.Count).Where(i => IsSubtitleTrack(tracks[i])).ToList();
-                if (_lastSubtitleSelection - 1 >= indices.Count)
+                if (IsSubtitleTrack(tracks[i]))
                 {
-                    return;
+                    indices.Add(i);
                 }
+            }
+            indices.Sort((a, b) => CompareSubtitleTracks(tracks[a], tracks[b]));
+            return indices;
+        }
 
-                var trackIndex = (uint)indices[_lastSubtitleSelection - 1];
-                tracks.SetPresentationMode(trackIndex, TimedMetadataTrackPresentationMode.Disabled);
-                tracks.SetPresentationMode(trackIndex, TimedMetadataTrackPresentationMode.PlatformPresented);
-            }
-            catch (System.Exception)
+        private static int CompareSubtitleTracks(TimedMetadataTrack a, TimedMetadataTrack b)
+        {
+            var langA = a.Language ?? string.Empty;
+            var langB = b.Language ?? string.Empty;
+            var cmp = string.Compare(langA, langB, StringComparison.OrdinalIgnoreCase);
+            if (cmp != 0)
             {
-                // Re-presentation is best-effort; the values are already set on the tracks.
+                return cmp;
             }
+            var labelA = a.Label ?? string.Empty;
+            var labelB = b.Label ?? string.Empty;
+            return string.Compare(labelA, labelB, StringComparison.OrdinalIgnoreCase);
         }
 
         // Auto-selects the audio / subtitle tracks that match the user's preferred language (todo #1).
@@ -1162,8 +1173,7 @@ namespace StremioCommunity
                     if (player.Source is MediaPlaybackItem item && item.TimedMetadataTracks.Count > 0)
                     {
                         var tracks = item.TimedMetadataTracks;
-                        var subtitleIndices =
-                            Enumerable.Range(0, tracks.Count).Where(i => IsSubtitleTrack(tracks[i])).ToList();
+                        var subtitleIndices = GetOrderedSubtitleTrackIndices(item);
                         if (subtitleIndices.Count > 0)
                         {
                             int chosenTrack = -1;
@@ -1194,16 +1204,28 @@ namespace StremioCommunity
                             }
                             if (chosenTrack >= 0)
                             {
-                                // Disable all subtitle tracks, then enable the chosen one.
+                                // Enable the chosen track FIRST, then disable the others. Reversing
+                                // the order (disable-all-then-enable) opened a window with zero
+                                // tracks presented, and Windows re-selected the first track —
+                                // defeating the preferred-language choice (todo #2).
+                                tracks.SetPresentationMode((uint)chosenTrack, TimedMetadataTrackPresentationMode.PlatformPresented);
                                 foreach (var ti in subtitleIndices)
                                 {
+                                    if (ti == chosenTrack)
+                                    {
+                                        continue;
+                                    }
                                     tracks.SetPresentationMode((uint)ti, TimedMetadataTrackPresentationMode.Disabled);
                                 }
-                                tracks.SetPresentationMode((uint)chosenTrack, TimedMetadataTrackPresentationMode.PlatformPresented);
                                 _lastSubtitleSelection = subtitleIndices.IndexOf(chosenTrack) + 1;
                                 Log("info", "Subtitles: auto-selected \"" +
                                     (tracks[chosenTrack].Label ?? tracks[chosenTrack].Language ?? "?") +
                                     "\" for preferred language \"" + CommunitySettings.LanguageLabels[subIdx] + "\"");
+                            }
+                            else
+                            {
+                                Log("warn", "Subtitles: no track matched preferred language \"" +
+                                    CommunitySettings.LanguageLabels[subIdx] + "\" — leaving as the player defaults");
                             }
                         }
                     }
@@ -2300,8 +2322,9 @@ namespace StremioCommunity
         {
             try
             {
-                var tracks = item.TimedMetadataTracks.Where(IsSubtitleTrack).Select(DescribeSubtitle).ToList();
-                Log("info", "Subtitle tracks: " + tracks.Count + (tracks.Count > 0 ? " - " + string.Join(", ", tracks.Take(15)) : string.Empty));
+                var indices = GetOrderedSubtitleTrackIndices(item);
+                var labels = indices.Select(i => DescribeSubtitle(item.TimedMetadataTracks[i])).ToList();
+                Log("info", "Subtitle tracks: " + labels.Count + (labels.Count > 0 ? " - " + string.Join(", ", labels.Take(15)) : string.Empty));
             }
             catch (Exception ex)
             {
@@ -2318,9 +2341,11 @@ namespace StremioCommunity
             }
 
             List<string> labels = new List<string>();
+            var orderedIndices = new List<int>();
             try
             {
-                foreach (var index in Enumerable.Range(0, item.TimedMetadataTracks.Count).Where(i => IsSubtitleTrack(item.TimedMetadataTracks[i])))
+                orderedIndices = GetOrderedSubtitleTrackIndices(item);
+                foreach (var index in orderedIndices)
                 {
                     labels.Add(DescribeSubtitle(item.TimedMetadataTracks[index]));
                 }
@@ -2471,16 +2496,21 @@ namespace StremioCommunity
             try
             {
                 var tracks = item.TimedMetadataTracks;
-                var indices = Enumerable.Range(0, tracks.Count).Where(i => IsSubtitleTrack(tracks[i])).ToList();
-                foreach (var index in indices)
-                {
-                    tracks.SetPresentationMode((uint)index, TimedMetadataTrackPresentationMode.Disabled);
-                }
-
+                var indices = GetOrderedSubtitleTrackIndices(item);
+                // Enable the chosen track FIRST (if any), then disable the others. This avoids
+                // a zero-track window where Windows would re-select the first track (todo #3).
                 if (chosen > 0)
                 {
                     var trackIndex = indices[chosen - 1];
                     tracks.SetPresentationMode((uint)trackIndex, TimedMetadataTrackPresentationMode.PlatformPresented);
+                }
+                foreach (var index in indices)
+                {
+                    if (chosen > 0 && index == indices[chosen - 1])
+                    {
+                        continue;
+                    }
+                    tracks.SetPresentationMode((uint)index, TimedMetadataTrackPresentationMode.Disabled);
                 }
 
                 Log("info", "Subtitles: " + label);

@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Subtitle tracks sorted by language (todo #1, round 3):** the subtitle menu, the
+  auto-select path, and the startup log now all use a single ordered list of subtitle tracks
+  (sorted by `Language`, then by `Label`, case-insensitive). A new helper
+  `GetOrderedSubtitleTrackIndices` (plus `CompareSubtitleTracks`) is the single source of
+  truth, so the row the user highlights is the row that gets selected, and `_lastSubtitleSelection`
+  stays consistent across reopenings.
 - **Preferred audio / subtitle language (todo #1):** two new settings rows — "Audio language"
   and "Subtitle language" — let the user pick a default language for each. On every video open
   (in `OnMediaOpened`), `ApplyPreferredLanguageTracks` scans the available tracks and auto-selects
@@ -55,6 +61,21 @@
   because the Xbox reports the physical-position `VirtualKey` (e.g. `@` as `Q`) and UWP exposes no
   Shift state, so symbols came out wrong. Letting Windows do the key→character conversion avoids that
   entirely.
+- **Preferred subtitle language actually applies (todo #2, round 3):** `ApplyPreferredLanguageTracks`
+  used to disable **all** subtitle tracks and then enable the chosen one. The brief window with zero
+  tracks presented let the player re-select the first track (often "none" or the original default),
+  so the user's preference was silently discarded. Now the chosen track is enabled **first** and the
+  others are disabled second, so the preference always sticks. A log line is emitted when no track
+  matches the preferred language, so a miss is never silent.
+- **Subtitles no longer disappear when adjusting delay / speed (todo #3, round 3):** stepping the
+  subtitle delay or speed in the player's Subtitle menu used to call `TryRepresentSubtitleTracks`,
+  which toggled the active track off and back on to "force" the renderer to pick up the new
+  `SubDelay` / `SubRate`. The off-then-on window (a) dropped the subtitles visibly and (b) let the
+  player re-select a different track, so the menu and the on-screen state diverged. The off-then-on
+  hack is removed: `SubDelay` / `SubRate` are read by the renderer at render time, so the new values
+  apply on the very next frame without any re-presentation. `TryRepresentSubtitleTracks` is gone.
+  `SelectSubtitleMenu` now also enables the chosen track first and disables the others second,
+  matching the auto-select path.
 
 ### Changed
 
