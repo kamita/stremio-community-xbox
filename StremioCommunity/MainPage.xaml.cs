@@ -1856,6 +1856,21 @@ namespace StremioCommunity
             // remote sends per button; that lets us map each one to an action in a follow-up.
             LogAccelKeyDiagnostics(args);
 
+            // 8BitDo remote face buttons (todo #4): A/X/Y use the same PadButton as the Xbox
+            // gamepad. B is not a PadButton (Xbox routes it through BackRequested), so it calls
+            // HandleBack directly. All four call HandlePadButton (bypassing the _keyboardVisible
+            // guard) because the 8BitDo is a separate device — its keys don't produce printable
+            // characters, so they're safe to let through even while the on-screen keyboard is up.
+            // The D-pad arrows (0xCB-0xCE) share VKs with the Xbox left-stick arrows and are
+            // handled AFTER the cursor-mode branch (below).
+            switch (args.VirtualKey)
+            {
+                case (VirtualKey)0xC3: HandlePadButton(PadButton.A); args.Handled = true; return;
+                case (VirtualKey)0xC4: HandleBack(); args.Handled = true; return;
+                case (VirtualKey)0xC5: HandlePadButton(PadButton.X); args.Handled = true; return;
+                case (VirtualKey)0xC6: HandlePadButton(PadButton.Y); args.Handled = true; return;
+            }
+
             // While the app's cursor owns the controller:
             //  - The left stick's arrow keys are ALWAYS blocked — unhandled they move XAML focus
             //    and scroll the Stremio UI behind the cursor.
@@ -1885,6 +1900,17 @@ namespace StremioCommunity
             if (args.KeyStatus.WasKeyDown)
             {
                 return; // auto-repeat outside of cursor mode is noise; ignore.
+            }
+
+            // 8BitDo remote D-pad (todo #4): Up/Down/Left/Right. These arrive AFTER the
+            // cursor-mode branch, so in cursor mode they're correctly swallowed (the left
+            // stick owns arrow navigation). In normal (D-pad) mode they navigate menus.
+            switch (args.VirtualKey)
+            {
+                case (VirtualKey)0xCB: HandlePadButton(PadButton.Up); args.Handled = true; return;
+                case (VirtualKey)0xCC: HandlePadButton(PadButton.Down); args.Handled = true; return;
+                case (VirtualKey)0xCD: HandlePadButton(PadButton.Left); args.Handled = true; return;
+                case (VirtualKey)0xCE: HandlePadButton(PadButton.Right); args.Handled = true; return;
             }
 
             // F-keys are our shortcuts regardless of mode.
@@ -1948,6 +1974,10 @@ namespace StremioCommunity
                 args.KeyStatus.IsExtendedKey));
         }
 
+        // Xbox gamepad entry point: the keyboard guard is here so the Xbox on-screen keyboard
+        // takes the controller while it's up. The 8BitDo remote bypasses this guard (it's a
+        // separate device; its keys don't produce printable characters) by calling
+        // HandlePadButton directly.
         private void OnPadButton(PadButton button)
         {
             if (_keyboardVisible)
@@ -1955,6 +1985,11 @@ namespace StremioCommunity
                 return; // The Xbox keyboard takes the controller.
             }
 
+            HandlePadButton(button);
+        }
+
+        private void HandlePadButton(PadButton button)
+        {
             // The settings panel owns the controller while open (opened with Y while browsing).
             if (SettingsPanel.Visibility == Visibility.Visible)
             {
