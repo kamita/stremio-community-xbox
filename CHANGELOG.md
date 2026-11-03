@@ -58,16 +58,17 @@
 ### Fixed
 
 - **8BitDo buttons no longer double-fire (todo round 4 #1, final fix):** the real cause was not
-  auto-repeat (the previous `WasKeyDown` filter was a red herring). Windows generates accelerator-key
-  events for BOTH the Xbox controller (XInput → Windows keyboard) and the 8BitDo (HID → Windows
-  keyboard), using the SAME `VirtualKey` codes (A = 0xC3, B = 0xC4, X = 0xC5, Y = 0xC6, D-pad =
-  0xCB-0xCE, Start = 0xCF, Select = 0xD0). The previous 8BitDo mapping therefore also caught the
-  Xbox's own accelerator-key events, dispatching every physical press twice — once through
-  `GamepadInput.Poll()` and again through `OnAcceleratorKeyActivated`. Fix: `OnPadButton` stamps
-  `_lastGamepadFireMs` on every XInput fire; `OnAcceleratorKeyActivated` now skips the 8BitDo
-  mapping (face buttons and D-pad) if a gamepad fired within the last 50 ms, so the Xbox press is
-  dispatched exactly once. The 8BitDo is unaffected: when it's the only input device no gamepad
-  fires, so its keys always pass the guard.
+  auto-repeat (the `WasKeyDown` filter was a red herring), and it was not a timing issue either.
+  The VKs in use (0xC0–0xDF) are Windows' RESERVED gamepad virtual-key range: a real XInput
+  gamepad (the Xbox controller AND the 8BitDo, which is an Xbox-compatible gamepad) is already
+  handled authoritatively by `GamepadInput.Poll()`, but the SAME physical button also surfaces as
+  an accelerator key with these codes, so the previous 8BitDo mapping re-dispatched every press a
+  second time. A time-window guard (skip if a gamepad fired within 50 ms) was tried and failed
+  because the accelerator-key event often arrives BEFORE the 60 Hz gamepad poll. The final fix is a
+  CONNECTION check: `GamepadConnected()` (`Gamepad.Gamepads.Count > 0`). The 0xC0–0xDF mapping in
+  `OnAcceleratorKeyActivated` is now applied only when NO XInput gamepad is connected — i.e. the
+  8BitDo acting as a keyboard HID device. When any gamepad is connected (the normal case) it is the
+  single source of truth and the accelerator-key path no longer touches those codes.
 - **Preferred subtitle language actually applies now (todo round 4 #2):**
   `ApplyPreferredLanguageTracks` and `ApplySubtitleTimingSpeed` were called in `OnMediaOpened`,
   which fires BEFORE the external `TimedTextSource` tracks have finished resolving (they're
