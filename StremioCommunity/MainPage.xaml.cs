@@ -42,7 +42,7 @@ namespace StremioCommunity
         private WebView2 _webView;
         private MediaPlayer _mediaPlayer;
         private PlayRequest _current;
-        private bool _nativePlayerEnabled = true;
+        private bool _nativePlayerEnabled = ReadSetting("nativePlayer", true);
         private bool _displayRequestActive;
         private DispatcherTimer _diagnosticsTimer;
         private long _fileSize; // From the probe; 0 until known.
@@ -55,14 +55,14 @@ namespace StremioCommunity
         private DispatcherTimer _osdTimer;
         private DateTime _osdHideAt;
         private bool _cursorMode = ReadSetting("cursorMode", true);
-        private bool _attachSubtitles = true; // LB in the debug log toggles it (stutter tests in 0.1.3.1).
+        private bool _attachSubtitles = ReadSetting("attachSubtitles", true); // LB in the debug log toggles it (stutter tests in 0.1.3.1).
         private HttpChunkCache _cache;
-        private int _connections = 6; // 0 = hand the URL to the player directly; RB in the debug log cycles it.
+        private int _connections = ReadSetting("connections", 6); // 0 = hand the URL to the player directly; RB in the debug log cycles it.
 
         // Restart seek modes (Menu in the debug log cycles them): seconds to jump forward before returning;
         // positive = after playback starts, negative = before playing (0.1.3.7), 0 = off.
         private static readonly int[] RestartSeekModes = { 10, 30, 60, -60, 0 };
-        private int _restartSeekMode;
+        private int _restartSeekMode = ReadSetting("restartSeek", 0);
 
         // Resume: persist the current playback position every few seconds (in LogPace), restore it
         // in OnMediaOpened before Play, clear it on OnMediaEnded. Keyed by a hash of the stream URL
@@ -124,13 +124,9 @@ namespace StremioCommunity
             _gamepad.Start();
             WatchKeyboard();
 
-            // The stick moved like a D-pad before the app's cursor existed; force the cursor
-            // on so the saved value (often "off" from an earlier build) can't leave it behind.
-            if (!_cursorMode)
-            {
-                _cursorMode = true;
-                SaveSetting("cursorMode", true);
-            }
+            // Respect the user's saved cursor choice (todo #2): previously the app force-enabled
+            // the cursor on every launch, discarding an explicit "off". The left-stick toggle
+            // (and the Settings panel) still writes the choice, and it now sticks across sessions.
             ApplyCursorMode();
 
             var version = Package.Current.Id.Version;
@@ -1102,6 +1098,123 @@ namespace StremioCommunity
             }
         }
 
+        // Auto-selects the audio / subtitle tracks that match the user's preferred language (todo #1).
+        // Called in OnMediaOpened after the tracks are available but before Play. Index 0 means
+        // "Auto (first track)" — no auto-selection is performed in that case.
+        private void ApplyPreferredLanguageTracks(MediaPlayer player)
+        {
+            // ---- Audio ----
+            var audioIdx = CommunitySettings.PreferredAudioLangIndex;
+            if (audioIdx > 0)
+            {
+                var code = CommunitySettings.LanguageCodes[audioIdx];
+                try
+                {
+                    if (player.Source is MediaPlaybackItem item && item.AudioTracks.Count > 0)
+                    {
+                        var tracks = item.AudioTracks;
+                        int chosen = -1;
+                        // First pass: Language starts with the code (e.g. "es" matches "es-ES").
+                        for (var i = 0; i < tracks.Count; i++)
+                        {
+                            var lang = tracks[i].Language ?? string.Empty;
+                            if (lang.StartsWith(code, StringComparison.OrdinalIgnoreCase))
+                            {
+                                chosen = i;
+                                break;
+                            }
+                        }
+                        // Second pass: Language contains the code.
+                        if (chosen < 0)
+                        {
+                            for (var i = 0; i < tracks.Count; i++)
+                            {
+                                var lang = tracks[i].Language ?? string.Empty;
+                                if (lang.Contains(code, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    chosen = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (chosen >= 0 && tracks.SelectedIndex != chosen)
+                        {
+                            tracks.SelectedIndex = chosen;
+                            Log("info", "Audio: auto-selected track " + (chosen + 1) +
+                                " (" + (tracks[chosen].Language ?? "?") + ") for preferred language \"" +
+                                CommunitySettings.LanguageLabels[audioIdx] + "\"");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log("warn", "Audio language auto-select failed: " + ex.Message);
+                }
+            }
+
+            // ---- Subtitles ----
+            var subIdx = CommunitySettings.PreferredSubLangIndex;
+            if (subIdx > 0)
+            {
+                var code = CommunitySettings.LanguageCodes[subIdx];
+                try
+                {
+                    if (player.Source is MediaPlaybackItem item && item.TimedMetadataTracks.Count > 0)
+                    {
+                        var tracks = item.TimedMetadataTracks;
+                        var subtitleIndices =
+                            Enumerable.Range(0, tracks.Count).Where(i => IsSubtitleTrack(tracks[i])).ToList();
+                        if (subtitleIndices.Count > 0)
+                        {
+                            int chosenTrack = -1;
+                            // First pass: Language starts with the code.
+                            foreach (var ti in subtitleIndices)
+                            {
+                                var lang = tracks[ti].Language ?? string.Empty;
+                                if (lang.StartsWith(code, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    chosenTrack = ti;
+                                    break;
+                                }
+                            }
+                            // Second pass: Language or Label contains the code.
+                            if (chosenTrack < 0)
+                            {
+                                foreach (var ti in subtitleIndices)
+                                {
+                                    var lang = tracks[ti].Language ?? string.Empty;
+                                    var label = tracks[ti].Label ?? string.Empty;
+                                    if (lang.Contains(code, StringComparison.OrdinalIgnoreCase) ||
+                                        label.Contains(code, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        chosenTrack = ti;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (chosenTrack >= 0)
+                            {
+                                // Disable all subtitle tracks, then enable the chosen one.
+                                foreach (var ti in subtitleIndices)
+                                {
+                                    tracks.SetPresentationMode((uint)ti, TimedMetadataTrackPresentationMode.Disabled);
+                                }
+                                tracks.SetPresentationMode((uint)chosenTrack, TimedMetadataTrackPresentationMode.PlatformPresented);
+                                _lastSubtitleSelection = subtitleIndices.IndexOf(chosenTrack) + 1;
+                                Log("info", "Subtitles: auto-selected \"" +
+                                    (tracks[chosenTrack].Label ?? tracks[chosenTrack].Language ?? "?") +
+                                    "\" for preferred language \"" + CommunitySettings.LanguageLabels[subIdx] + "\"");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log("warn", "Subtitle language auto-select failed: " + ex.Message);
+                }
+            }
+        }
+
         private static string GuessContentType(PlayRequest request, string probedType)
         {
             var text = string.Join(" ", request.FileName, request.Description, request.Name, request.Url);
@@ -1252,6 +1365,10 @@ namespace StremioCommunity
 
                 // Apply persistent subtitle timing / speed to every subtitle track present.
                 ApplySubtitleTimingSpeed(sender);
+
+                // Auto-select audio / subtitle tracks by the user's preferred language (todo #1).
+                // Runs before Play; a no-op when the preference is "Auto (first track)" (index 0).
+                ApplyPreferredLanguageTracks(sender);
 
                 // Decided from what the decoder reports, not from release names: Dolby Vision only when
                 // the Xbox decodes it as DV (subtype DVHE/DVH1); DV MKVs decode as HEVC + HDR10 base layer.
@@ -1653,6 +1770,13 @@ namespace StremioCommunity
 
             if (PlayerLayer.Visibility == Visibility.Visible)
             {
+                if (HelpOverlay.Visibility == Visibility.Visible)
+                {
+                    CloseHelpOverlay();
+                    Log("info", "Controls help closed");
+                    return true;
+                }
+
                 if (AudioMenu.Visibility == Visibility.Visible)
                 {
                     CloseAudioMenu();
@@ -1703,6 +1827,12 @@ namespace StremioCommunity
             {
                 return;
             }
+
+            // Diagnostic: the 8BitDo remote (and other remotes) arrive as native accelerator keys,
+            // not as a Gamepad, so GamepadInput never sees them. Log the VirtualKey + ScanCode of
+            // every key (throttled per-key so held keys don't flood) to capture exactly what the
+            // remote sends per button; that lets us map each one to an action in a follow-up.
+            LogAccelKeyDiagnostics(args);
 
             // While the app's cursor owns the controller:
             //  - The left stick's arrow keys are ALWAYS blocked — unhandled they move XAML focus
@@ -1775,6 +1905,27 @@ namespace StremioCommunity
             }
         }
 
+        // Diagnostic (todo #1): capture what a remote (e.g. the 8BitDo) sends as native accelerator
+        // keys. Throttled per (VirtualKey, ScanCode) so a held key logs once, not on every repeat.
+        private readonly System.Collections.Generic.Dictionary<string, int> _accelKeyLastLog
+            = new System.Collections.Generic.Dictionary<string, int>();
+
+        private void LogAccelKeyDiagnostics(AcceleratorKeyEventArgs args)
+        {
+            string tag = (int)args.VirtualKey + ":" + (int)args.KeyStatus.ScanCode;
+            int now = Environment.TickCount;
+            if (_accelKeyLastLog.TryGetValue(tag, out int last) && (now - last) < 800)
+            {
+                return;
+            }
+            _accelKeyLastLog[tag] = now;
+            Log("info", string.Format(
+                "ACCEL key vk=0x{0:X2} sc={1} ext={2}",
+                (int)args.VirtualKey,
+                (int)args.KeyStatus.ScanCode,
+                args.KeyStatus.IsExtendedKey));
+        }
+
         private void OnPadButton(PadButton button)
         {
             if (_keyboardVisible)
@@ -1789,6 +1940,13 @@ namespace StremioCommunity
                 return;
             }
 
+            // While the player is up, View opens the controls help (not the debug panel).
+            if (button == PadButton.View && PlayerLayer.Visibility == Visibility.Visible)
+            {
+                HandlePlayerButton(button);
+                return;
+            }
+
             if (button == PadButton.View)
             {
                 SetDebugVisible(DebugPanel.Visibility != Visibility.Visible);
@@ -1800,6 +1958,7 @@ namespace StremioCommunity
                 if (button == PadButton.Y)
                 {
                     _nativePlayerEnabled = !_nativePlayerEnabled;
+                    SaveSetting("nativePlayer", _nativePlayerEnabled);
                     SendConfigToPage();
                     UpdateDebugHeader();
                 }
@@ -1825,18 +1984,21 @@ namespace StremioCommunity
                 else if (button == PadButton.RightShoulder)
                 {
                     _connections = _connections == 0 ? 1 : _connections == 1 ? 2 : _connections == 2 ? 4 : _connections == 4 ? 6 : 0;
+                    SaveSetting("connections", _connections);
                     Log("info", "Download mode: " + DescribeConnections() + " (applies to the next playback)");
                     UpdateDebugHeader();
                 }
                 else if (button == PadButton.Menu)
                 {
                     _restartSeekMode = (_restartSeekMode + 1) % RestartSeekModes.Length;
+                    SaveSetting("restartSeek", _restartSeekMode);
                     Log("info", "Restart seek: " + DescribeRestartSeek() + " (applies to the next playback)");
                     UpdateDebugHeader();
                 }
                 else if (button == PadButton.LeftShoulder)
                 {
                     _attachSubtitles = !_attachSubtitles;
+                    SaveSetting("attachSubtitles", _attachSubtitles);
                     Log("info", "Attach external subtitles: " + (_attachSubtitles ? "ON" : "OFF") + " (applies to the next playback)");
                     UpdateDebugHeader();
                 }
@@ -1933,6 +2095,20 @@ namespace StremioCommunity
             var session = _mediaPlayer?.PlaybackSession;
             if (session == null)
             {
+                return;
+            }
+
+            // Controls help overlay (todo #2): View (Guide) toggles it. While open it owns the
+            // controller — the first button pressed closes it and does nothing else.
+            if (HelpOverlay.Visibility == Visibility.Visible)
+            {
+                CloseHelpOverlay();
+                Log("info", "Controls help closed");
+                return;
+            }
+            if (button == PadButton.View)
+            {
+                OpenHelpOverlay();
                 return;
             }
 
@@ -2325,6 +2501,82 @@ namespace StremioCommunity
             }
         }
 
+        // ---- Controls help overlay (todo #2) ---------------------------------------------------------
+        // Populates and shows the static controls list. Built once; the panels are cleared and
+        // re-filled on every open so the XAML layout is never mutated.
+        private void OpenHelpOverlay()
+        {
+            var rows = new[]
+            {
+                ("A", "Play / Pause"),
+                ("B", "Close menu / Back"),
+                ("Y", "Audio tracks"),
+                ("X", "Subtitles"),
+                ("D-pad Up / Down", "Navigate menus"),
+                ("D-pad Left / Right", "±10 s seek (or subtitle delay/speed step)"),
+                ("LB / RB", "±60 s seek"),
+                ("View / Guide", "This help overlay"),
+                ("Left stick (cursor on)", "Move cursor"),
+                ("Right stick (cursor on)", "Scroll page"),
+            };
+
+            // Split into two columns so the list is compact on a 16:9 screen.
+            var mid = rows.Length / 2;
+            HelpLeft.Children.Clear();
+            HelpRight.Children.Clear();
+            for (var i = 0; i < mid; i++)
+            {
+                HelpLeft.Children.Add(BuildHelpRow(rows[i].Item1, rows[i].Item2));
+            }
+            for (var i = mid; i < rows.Length; i++)
+            {
+                HelpRight.Children.Add(BuildHelpRow(rows[i].Item1, rows[i].Item2));
+            }
+
+            _osdTimer?.Stop();
+            HelpOverlay.Visibility = Visibility.Visible;
+            Osd.Visibility = Visibility.Collapsed;
+            Log("info", "Controls help opened (View)");
+        }
+
+        private void CloseHelpOverlay()
+        {
+            if (HelpOverlay.Visibility == Visibility.Visible)
+            {
+                HelpOverlay.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private static Grid BuildHelpRow(string button, string action)
+        {
+            var grid = new Grid { Margin = new Windows.UI.Xaml.Thickness(0, 6, 0, 6) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(210, GridUnitType.Pixel) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var btn = new TextBlock
+            {
+                Text = button,
+                FontSize = 20,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromArgb(255, 0xFF, 0xD5, 0x4F)),
+                TextTrimming = TextTrimming.CharacterEllipsis,
+            };
+            Grid.SetColumn(btn, 0);
+
+            var act = new TextBlock
+            {
+                Text = action,
+                FontSize = 20,
+                Foreground = new SolidColorBrush(Colors.White),
+                TextTrimming = TextTrimming.CharacterEllipsis,
+            };
+            Grid.SetColumn(act, 1);
+
+            grid.Children.Add(btn);
+            grid.Children.Add(act);
+            return grid;
+        }
+
         // D-pad Left/Right (todo.md #4): step the highlighted subtitle timing row by `direction`
         // (-1 = decrease, +1 = increase) and apply it live. No-op unless a delay/speed row is
         // highlighted — the A-button path (SelectSubtitleMenu) reuses the same stepping logic.
@@ -2681,6 +2933,7 @@ namespace StremioCommunity
         private static readonly string[] SettingsRowKeys =
         {
             "volume", "speed", "mute",
+            "audioLang", "subLang",
             "pauseMin", "pauseFocus",
             "zoom", "connections", "restartSeek",
             "resume", "autoContinue", "bufferMb", "hdrQuality",
@@ -2699,6 +2952,10 @@ namespace StremioCommunity
                     return new SettingRow { Kind = "number", Key = key, Title = "Playback speed", Value = CommunitySettings.PlaybackRate, Min = 0.25, Max = 4.0, Step = 0.25, Unit = "x" };
                 case "mute":
                     return new SettingRow { Kind = "toggle", Key = key, Title = "Start muted", IsToggle = true, On = CommunitySettings.Muted };
+                case "audioLang":
+                    return new SettingRow { Kind = "cycle", Key = key, Title = "Audio language", CycleValues = LangCycleValues(), CycleIndex = CommunitySettings.PreferredAudioLangIndex };
+                case "subLang":
+                    return new SettingRow { Kind = "cycle", Key = key, Title = "Subtitle language", CycleValues = LangCycleValues(), CycleIndex = CommunitySettings.PreferredSubLangIndex };
                 case "pauseMin":
                     return new SettingRow { Kind = "toggle", Key = key, Title = "Pause on background", IsToggle = true, On = CommunitySettings.PauseOnMinimize };
                 case "pauseFocus":
@@ -2739,6 +2996,12 @@ namespace StremioCommunity
 
         // Step sets for the cycle rows.
         private static readonly double[] ConnectionSteps = { 0.0, 1.0, 2.0, 4.0, 6.0 };
+
+        // Cycle values for the language rows: one entry per language (index == the stored value).
+        private static double[] LangCycleValues()
+        {
+            return System.Linq.Enumerable.Range(0, CommunitySettings.LanguageCodes.Length).Select(i => (double)i).ToArray();
+        }
         private static readonly double[] RestartSeekSteps = RestartSeekModes.Select(v => (double)v).ToArray();
         private static readonly double[] BufferMbSteps = { 0, 128, 256, 512, 768, 1024, 1536 }; // 0 = automatic
         private static readonly double[] HdrQualitySteps = { 0, 1, 2 }; // auto / force HDR / force SDR
@@ -2849,6 +3112,11 @@ namespace StremioCommunity
                         case 2: return "force SDR";
                         default: return "auto (follow video)";
                     }
+                case "audioLang":
+                case "subLang":
+                    return index < CommunitySettings.LanguageLabels.Length
+                        ? CommunitySettings.LanguageLabels[index]
+                        : string.Empty;
                 default:
                     return string.Empty;
             }
@@ -2927,10 +3195,12 @@ namespace StremioCommunity
                         break;
                     case "connections":
                         _connections = (int)ConnectionSteps[newIndex];
+                        SaveSetting("connections", _connections);
                         Log("info", "Download mode: " + DescribeConnections() + " (applies to the next playback)");
                         break;
                     case "restartSeek":
                         _restartSeekMode = newIndex;
+                        SaveSetting("restartSeek", _restartSeekMode);
                         Log("info", "Restart seek: " + DescribeRestartSeek() + " (applies to the next playback)");
                         break;
                     case "bufferMb":
@@ -2940,6 +3210,14 @@ namespace StremioCommunity
                     case "hdrQuality":
                         CommunitySettings.HdrQualityMode = newIndex;
                         Log("info", "HDR quality: " + DescribeCycle("hdrQuality", newIndex) + " (applies to the next playback)");
+                        break;
+                    case "audioLang":
+                        CommunitySettings.PreferredAudioLangIndex = newIndex;
+                        Log("info", "Audio language: " + DescribeCycle("audioLang", newIndex) + " (applies to the next playback)");
+                        break;
+                    case "subLang":
+                        CommunitySettings.PreferredSubLangIndex = newIndex;
+                        Log("info", "Subtitle language: " + DescribeCycle("subLang", newIndex) + " (applies to the next playback)");
                         break;
                 }
 

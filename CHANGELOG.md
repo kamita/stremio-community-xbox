@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Preferred audio / subtitle language (todo #1):** two new settings rows — "Audio language"
+  and "Subtitle language" — let the user pick a default language for each. On every video open
+  (in `OnMediaOpened`), `ApplyPreferredLanguageTracks` scans the available tracks and auto-selects
+  the first one whose `Language` starts with (or contains) the chosen code. Index 0 = "Auto
+  (first track)" (no auto-selection, the default). Supported codes: es, en, fr, pt, de, it, ja,
+  ko, zh, ru, ar. Persisted via `CommunitySettings.PreferredAudioLangIndex` / `PreferredSubLangIndex`.
+- **Controls help overlay in the player (todo #2):** pressing **View (Guide)** while the native
+  player is up opens a compact two-column list of all player controls (A = play/pause, Y = audio,
+  X = subtitles, D-pad = navigate / ±10 s seek, LB/RB = ±60 s, cursor controls, etc.). Any button
+  (including B) closes it. Implemented as a new `HelpOverlay` `Border` in `PlayerLayer` (XAML),
+  populated by `OpenHelpOverlay` / `CloseHelpOverlay` (C#). View on the player no longer opens the
+  debug panel — that shortcut is unchanged while browsing.
+- **8BitDo remote diagnostics (todo #1):** the 8BitDo (and similar) remotes arrive as native
+  accelerator keys, not as a `Gamepad`, so `GamepadInput` (which polls `Gamepad.Gamepads`) never
+  sees them and the app ignored them. Every accelerator key (throttled per `VirtualKey`/`ScanCode`
+  so held keys log once) is now logged with its `VirtualKey`, `ScanCode`, and extended flag —
+  `ACCEL key vk=0x.. sc=.. ext=..` — so the exact code each remote button sends can be captured
+  and mapped to an action in a follow-up. (Mapping the buttons requires the captured codes; the
+  `shell.js` diagnostic logger also records the WebView2-side `key`/`code`/`keyCode`.)
+
+### Changed
+
+- **Session settings now persist across restarts (todo #2):** previously `OnLoaded`
+  force-enabled the cursor on every launch, discarding the user's explicit choice. Now the
+  saved `cursorMode` is respected, and the other session toggles that were reset each start are
+  read back and re-saved on change: `nativePlayer` (debug panel Y), `attachSubtitles`
+  (debug panel LB), `connections` (debug panel RB / settings), and `restartSeek`
+  (debug panel Menu / settings). `pageZoom`, `systemCursor`, and the `CommunitySettings`
+  values (volume, rate, mute, pause/resume, subtitles delay/speed/scale, buffer, HDR) already
+  persisted and are unchanged.
+
 ### Fixed
 
 - **On-screen keyboard typing in cursor mode + no more UI drift:** in cursor mode the app used to

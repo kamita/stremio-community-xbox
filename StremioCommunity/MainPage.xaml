@@ -96,6 +96,42 @@
                         Text="D-pad: move   A: select   B: close" />
                 </StackPanel>
             </Border>
+
+            <!-- Controls help overlay (View / Guide opens; B or any other button closes). Shows the
+                 full set of player buttons so the user can look them up at any time (todo #2). -->
+            <Border
+                x:Name="HelpOverlay"
+                Visibility="Collapsed"
+                Background="#F2000000"
+                BorderBrush="#7B5BF5"
+                BorderThickness="2"
+                CornerRadius="8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                MaxWidth="900"
+                MinWidth="640"
+                Padding="36,28">
+                <StackPanel>
+                    <TextBlock
+                        FontSize="26"
+                        Foreground="#FFD54F"
+                        Margin="0,0,0,18"
+                        Text="Controls" />
+                    <Grid ColumnSpacing="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel x:Name="HelpLeft" Grid.Column="0" />
+                        <StackPanel x:Name="HelpRight" Grid.Column="1" />
+                    </Grid>
+                    <TextBlock
+                        FontSize="16"
+                        Foreground="#88FFFFFF"
+                        Margin="0,20,0,0"
+                        Text="Press B (or any button) to close" />
+                </StackPanel>
+            </Border>
         </Grid>
 
         <!-- Settings panel (Menu/Menu-button while browsing). D-pad moves, LB/RB adjust numbers,

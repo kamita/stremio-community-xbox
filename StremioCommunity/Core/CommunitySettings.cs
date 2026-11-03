@@ -192,6 +192,30 @@ namespace StremioCommunity.Core
             set => WriteBool("Playback_AutoContinue", value);
         }
 
+        // ---- Preferred language for auto-selecting audio / subtitle tracks (todo #1) ----
+        // Index 0 = "Auto (first track)" (no auto-selection).
+        // Index 1+ = the language code from LanguageCodes[i].
+
+        /// <summary>Language codes indexed by position in the settings list.</summary>
+        public static readonly string[] LanguageCodes = { "", "es", "en", "fr", "pt", "de", "it", "ja", "ko", "zh", "ru", "ar" };
+
+        /// <summary>Human-readable labels for the settings panel.</summary>
+        public static readonly string[] LanguageLabels = { "Auto (first track)", "Español", "English", "Français", "Português", "Deutsch", "Italiano", "日本語", "한국어", "中文", "Русский", "العربية" };
+
+        /// <summary>Preferred audio track language (index into LanguageCodes; 0 = auto/first).</summary>
+        public static int PreferredAudioLangIndex
+        {
+            get => ReadInt("Lang_Audio", 0);
+            set => WriteInt("Lang_Audio", Math.Max(0, Math.Min(value, LanguageCodes.Length - 1)));
+        }
+
+        /// <summary>Preferred subtitle track language (index into LanguageCodes; 0 = auto/first).</summary>
+        public static int PreferredSubLangIndex
+        {
+            get => ReadInt("Lang_Subtitle", 0);
+            set => WriteInt("Lang_Subtitle", Math.Max(0, Math.Min(value, LanguageCodes.Length - 1)));
+        }
+
         // ---- Debrid read-ahead buffer size (MB). 0 = automatic (memory-derived). ----
         private static readonly int[] BufferMbSteps = { 0, 128, 256, 512, 768, 1024, 1536 };
 

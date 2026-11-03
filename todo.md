@@ -1,2 +1,2 @@
-1. Tengo un control remoto "8bitdo remote for xbox" y al usarlo en la app no hace nada y el log muestra mensajes "WARN web: INPUT keyup | key=Unidentified core= trusted=true target=BODY".
-2. Se deben guardar los cambios que se hacen en la sesión, como si está habilitado o no el cursor.
+1. Al iniciar el reproductor, respetar el idioma del audio y del subtitulo por defecto configurados en el perfil.
+2. Usar algún botón (puede ser start) para abrir un layout de los controles disponibles.
