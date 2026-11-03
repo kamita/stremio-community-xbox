@@ -24,8 +24,9 @@
   gamepad entry point with the `_keyboardVisible` guard (the 8BitDo bypasses it, as its keys
   don't produce printable characters).
 - **Preferred audio / subtitle language (todo #1):** two new settings rows — "Audio language"
-  and "Subtitle language" — let the user pick a default language for each. On every video open
-  (in `OnMediaOpened`), `ApplyPreferredLanguageTracks` scans the available tracks and auto-selects
+  and "Subtitle language" — let the user pick a default language for each. Once the video's track
+  set is available (via `TimedMetadataTracksChanged`, see the Fixed section for why not
+  `OnMediaOpened`), `ApplyPreferredLanguageTracks` scans the available tracks and auto-selects
   the first one whose `Language` starts with (or contains) the chosen code. Index 0 = "Auto
   (first track)" (no auto-selection, the default). Supported codes: es, en, fr, pt, de, it, ja,
   ko, zh, ru, ar. Persisted via `CommunitySettings.PreferredAudioLangIndex` / `PreferredSubLangIndex`.
@@ -55,6 +56,29 @@
   persisted and are unchanged.
 
 ### Fixed
+
+- **8BitDo buttons no longer double-fire (todo round 4 #1):** the face-buttons block
+  (A/B/X/Y/Start/Select) in `OnAcceleratorKeyActivated` was placed BEFORE the
+  `args.KeyStatus.WasKeyDown` check. Windows re-dispatches `KeyDown` every ~30 ms while a key
+  is held (auto-repeat), and without the filter each repeat re-invoked `HandlePadButton` —
+  so a single press of A in the player would toggle play/pause twice, or a held D-pad arrow
+  would seek by 20 s instead of 10 s. The `WasKeyDown` early-return is now placed before
+  the face-buttons switch, shared by all 8BitDo paths.
+- **Preferred subtitle language actually applies now (todo round 4 #2):**
+  `ApplyPreferredLanguageTracks` and `ApplySubtitleTimingSpeed` were called in `OnMediaOpened`,
+  which fires BEFORE the external `TimedTextSource` tracks have finished resolving (they're
+  fetched over HTTP). At that point `item.TimedMetadataTracks.Count` is 0, so the auto-select
+  loop had nothing to match and `SubDelay`/`SubRate` were set on zero tracks — both
+  preferences silently lost. A new handler `OnSubtitleTracksAvailable` is now wired to
+  `TimedMetadataTracksChanged` (which fires when the full track set is available) and applies
+  both preferences there, with a per-playback guard so it runs exactly once. Manual user
+  selection (made before the event) is respected and not overridden.
+- **Subtitle delay/speed work (todo round 4 #3):** same root cause as #2 — the timing/speed
+  values were applied to zero tracks at `OnMediaOpened`. Now they're applied in
+  `OnSubtitleTracksAvailable`, after the tracks are present, so `SubDelay`/`SubRate` are
+  actually set on every subtitle track. Adjusting them live from the Subtitle menu still works
+  as before (those paths call `ApplySubtitleTimingSpeed` directly, by which time the tracks
+  are already resolved).
 
 - **On-screen keyboard typing in cursor mode + no more UI drift:** in cursor mode the app used to
   consume **every** key, so printable characters from the Xbox on-screen keyboard never reached a

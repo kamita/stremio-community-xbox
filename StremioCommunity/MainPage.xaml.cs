@@ -881,7 +881,11 @@ namespace StremioCommunity
                 }
 
                 var item = new MediaPlaybackItem(source);
-                item.TimedMetadataTracksChanged += (sender2, args2) => _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => LogSubtitleTracks(sender2));
+                item.TimedMetadataTracksChanged += (sender2, args2) => _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    LogSubtitleTracks(sender2);
+                    OnSubtitleTracksAvailable(sender2);
+                });
                 _lastSubtitleSelection = 0;
                 player.Source = item;
             }
@@ -1385,12 +1389,11 @@ namespace StremioCommunity
                 _displayModes.MatchResolution = CommunitySettings.MatchResolution;
                 _displayModes.MatchRefreshRate = CommunitySettings.MatchRefreshRate;
 
-                // Apply persistent subtitle timing / speed to every subtitle track present.
-                ApplySubtitleTimingSpeed(sender);
-
-                // Auto-select audio / subtitle tracks by the user's preferred language (todo #1).
-                // Runs before Play; a no-op when the preference is "Auto (first track)" (index 0).
-                ApplyPreferredLanguageTracks(sender);
+                // Apply persistent subtitle timing / speed now that the full track set is
+                // available. NOTE (todo round 4 #2/#3): previously these were called in
+                // OnMediaOpened, before external TimedTextSource tracks had resolved, so they
+                // were applied to zero tracks and silently lost. The new OnSubtitleTracksAvailable
+                // handler (wired to TimedMetadataTracksChanged) is the reliable entry point.
 
                 // Decided from what the decoder reports, not from release names: Dolby Vision only when
                 // the Xbox decodes it as DV (subtype DVHE/DVH1); DV MKVs decode as HEVC + HDR10 base layer.
@@ -1856,9 +1859,19 @@ namespace StremioCommunity
             // remote sends per button; that lets us map each one to an action in a follow-up.
             LogAccelKeyDiagnostics(args);
 
+            // Filter auto-repeat FIRST (todo round 4 #1): Windows re-dispatches KeyDown every
+            // ~30 ms while a key is held. Without this filter, each repeat would re-invoke
+            // HandlePadButton and the action would fire N times (seek jumps, menu toggle, pause
+            // toggle flipping back and forth). The D-pad block below already had this filter;
+            // the face-buttons block didn't. Both now share the same early return.
+            if (args.KeyStatus.WasKeyDown)
+            {
+                return; // auto-repeat is noise in every mode; ignore.
+            }
+
             // 8BitDo remote face buttons (todo #4): A/X/Y use the same PadButton as the Xbox
             // gamepad. B is not a PadButton (Xbox routes it through BackRequested), so it calls
-            // HandleBack directly. All four call HandlePadButton (bypassing the _keyboardVisible
+            // HandleBack directly. All four call HandlePadButton (bypassing the _keyboard_visible
             // guard) because the 8BitDo is a separate device — its keys don't produce printable
             // characters, so they're safe to let through even while the on-screen keyboard is up.
             // The D-pad arrows (0xCB-0xCE) share VKs with the Xbox left-stick arrows and are
@@ -1899,14 +1912,10 @@ namespace StremioCommunity
                 return;
             }
 
-            if (args.KeyStatus.WasKeyDown)
-            {
-                return; // auto-repeat outside of cursor mode is noise; ignore.
-            }
-
             // 8BitDo remote D-pad (todo #4): Up/Down/Left/Right. These arrive AFTER the
             // cursor-mode branch, so in cursor mode they're correctly swallowed (the left
             // stick owns arrow navigation). In normal (D-pad) mode they navigate menus.
+            // Auto-repeat was already filtered above.
             switch (args.VirtualKey)
             {
                 case (VirtualKey)0xCB: HandlePadButton(PadButton.Up); args.Handled = true; return;
@@ -2340,6 +2349,55 @@ namespace StremioCommunity
             }
 
             Log("info", "External subtitles: " + request.Subtitles.Count);
+        }
+
+        // Guards for OnSubtitleTracksAvailable (todo round 4 #2/#3): the per-playback flag
+        // prevents the auto-select + timing/speed block from re-firing on subsequent
+        // TimedMetadataTracksChanged events (e.g. a late-arriving second batch of tracks).
+        private MediaPlaybackItem _subtitlePrefItem;
+        private bool _subtitlePrefApplied;
+
+        // External subtitle tracks (added via TimedTextSource.CreateFromUri) resolve ASYNCHRONOUSLY
+        // — at the time OnMediaOpened fires, item.TimedMetadataTracks is often still empty, so
+        // applying preferred language + SubDelay/SubRate there was a no-op (todo round 4 #2/#3).
+        // TimedMetadataTracksChanged is the reliable signal that the full track set is available;
+        // we hook it once per playback and apply both preferences there. Embedded tracks
+        // (e.g. in an MKV) are already present at MediaOpened and also trigger this event,
+        // so the same path works for both cases.
+        private void OnSubtitleTracksAvailable(MediaPlaybackItem item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            if (item != _subtitlePrefItem)
+            {
+                _subtitlePrefItem = item;
+                _subtitlePrefApplied = false;
+            }
+
+            if (_subtitlePrefApplied)
+            {
+                return;
+            }
+
+            if (_mediaPlayer?.Source != item)
+            {
+                return; // Another playback replaced this item; do not touch it.
+            }
+
+            // Only auto-select if the user hasn't already picked a track manually for this
+            // playback — a manual choice (made before this event) takes precedence.
+            var userChose = _lastSubtitleSelection > 0;
+            if (!userChose)
+            {
+                ApplyPreferredLanguageTracks(_mediaPlayer);
+            }
+
+            // Always apply the saved SubDelay / SubRate now that the tracks are present.
+            ApplySubtitleTimingSpeed(_mediaPlayer);
+            _subtitlePrefApplied = true;
         }
 
         private static bool IsSubtitleTrack(TimedMetadataTrack track)
