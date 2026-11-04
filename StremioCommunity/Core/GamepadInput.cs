@@ -30,13 +30,9 @@ namespace StremioCommunity.Core
     public sealed class GamepadInput
     {
         private const double StickThreshold = 0.6;
-        private static readonly TimeSpan RepeatDelay = TimeSpan.FromMilliseconds(400);
-        private static readonly TimeSpan RepeatInterval = TimeSpan.FromMilliseconds(110);
 
         private readonly DispatcherTimer _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
         private uint _previous;
-        private PadButton? _held;
-        private DateTime _nextRepeat;
 
         public GamepadInput()
         {
@@ -57,18 +53,12 @@ namespace StremioCommunity.Core
             _timer.Start();
         }
 
-        private static bool IsDirection(PadButton button)
-        {
-            return button <= PadButton.Right;
-        }
-
         private void Poll()
         {
             var pad = Gamepad.Gamepads.FirstOrDefault();
             if (pad == null)
             {
                 _previous = 0;
-                _held = null;
                 return;
             }
 
@@ -99,7 +89,6 @@ namespace StremioCommunity.Core
             Set(PadButton.RightShoulder, (buttons & GamepadButtons.RightShoulder) != 0);
             Set(PadButton.LeftStick, (buttons & GamepadButtons.LeftThumbstick) != 0);
 
-            var now = DateTime.UtcNow;
             var newlyPressed = state & ~_previous;
             _previous = state;
 
@@ -110,27 +99,14 @@ namespace StremioCommunity.Core
                     continue;
                 }
 
-                if (IsDirection(button))
-                {
-                    _held = button;
-                    _nextRepeat = now + RepeatDelay;
-                }
-
                 Pressed?.Invoke(button);
             }
 
-            if (_held.HasValue)
-            {
-                if ((state & (1u << (int)_held.Value)) == 0)
-                {
-                    _held = null;
-                }
-                else if (now >= _nextRepeat)
-                {
-                    _nextRepeat = now + RepeatInterval;
-                    Pressed?.Invoke(_held.Value);
-                }
-            }
+            // NOTE (todo round 5 #1): auto-repeat for held directions was REMOVED. The 8BitDo
+            // remote reports its left stick as D-pad (not as a thumbstick), so holding the stick
+            // in a direction produced repeated Up/Down/Left/Right events that moved the UI
+            // selection uncontrollably. Each press now fires exactly one event; to navigate
+            // further the user presses the direction again. Face buttons were never auto-repeating.
 
             Polled?.Invoke(reading);
         }

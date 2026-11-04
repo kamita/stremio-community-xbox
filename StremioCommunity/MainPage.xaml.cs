@@ -1052,13 +1052,27 @@ namespace StremioCommunity
                 // reads SubDelay/SubRate continuously at render time, so no re-presentation is
                 // needed; the values apply on the very next frame.
 
+                // Detect platform support: if the APIs are absent, remember it so the subtitle
+                // menu can hide the delay/speed rows (they cannot work on this device).
+                if (!apiAvailable)
+                {
+                    _subtitleTimingSupported = false;
+                }
+
                 if (subtitleCount == 0)
                 {
                     Log("warn", "Subtitle delay/speed: no subtitle tracks present to adjust");
                 }
                 else if (!apiAvailable)
                 {
-                    Log("warn", "Subtitle delay/speed: SubDelay/SubRate API not available on this Windows version");
+                    // todo round 5 #2: the Xbox build does not expose SubDelay/SubRate. We detect
+                    // it on every call but log the warning only once so the session log stays
+                    // readable — the feature simply cannot work on this platform.
+                    if (!_subtitleTimingApiUnavailableLogged)
+                    {
+                        _subtitleTimingApiUnavailableLogged = true;
+                        Log("warn", "Subtitle delay/speed: SubDelay/SubRate API not available on this Windows version (Xbox build). Delay/speed controls are disabled on this device.");
+                    }
                 }
                 else if (firstError != null)
                 {
@@ -1113,6 +1127,66 @@ namespace StremioCommunity
             return string.Compare(labelA, labelB, StringComparison.OrdinalIgnoreCase);
         }
 
+        // Tracks report their language in ISO 639-2/T codes ("spa", "eng", "ita", "por", ...),
+        // but the user's preference is stored as an ISO 639-1 code ("es", "en", "it", "pt", ...).
+        // Matching only on the 639-1 code never hit, so subtitles/audio were never auto-selected
+        // (todo round 5 #3: "Sigue empezando la reproducción con los subtítulos en off").
+        // This returns every code variant (639-1 + 639-2/T + legacy) that should match a preference.
+        private static string[] LanguageVariants(string code)
+        {
+            switch (code.ToLowerInvariant())
+            {
+                case "es": return new[] { "es", "spa" };
+                case "en": return new[] { "en", "eng" };
+                case "fr": return new[] { "fr", "fra", "fre" };
+                case "pt": return new[] { "pt", "por" };
+                case "de": return new[] { "de", "deu", "ger" };
+                case "it": return new[] { "it", "ita" };
+                case "ja": return new[] { "ja", "jpn" };
+                case "ko": return new[] { "ko", "kor" };
+                case "zh": return new[] { "zh", "zho", "chi" };
+                case "ru": return new[] { "ru", "rus" };
+                case "ar": return new[] { "ar", "ara" };
+                default:   return new[] { code };
+            }
+        }
+
+        // True when a track's language (ISO 639-1/2, possibly a regional tag like "es-ES" / "spa")
+        // corresponds to the user's preferred language code. Matching is exact on the base code so
+        // that "en" does not spuriously match "eng" (a bare prefix check would fail / over-match).
+        private static bool LanguageMatches(string trackLang, string code)
+        {
+            if (string.IsNullOrEmpty(trackLang) || string.IsNullOrEmpty(code))
+            {
+                return false;
+            }
+            var baseCode = trackLang.Split('-')[0].ToLowerInvariant();
+            foreach (var variant in LanguageVariants(code))
+            {
+                if (baseCode == variant)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // A short keyword from the language label useful for fuzzy-matching a track's Label
+        // (which frequently contains the language name). Returns null when there is no keyword.
+        private static string LanguageLabelKeyword(string label)
+        {
+            switch (label)
+            {
+                case "Español":   return "spani";
+                case "English":   return "english";
+                case "Français":  return "french";
+                case "Português": return "portug";
+                case "Deutsch":   return "german";
+                case "Italiano":  return "italian";
+                default:          return null;
+            }
+        }
+
         // Auto-selects the audio / subtitle tracks that match the user's preferred language (todo #1).
         // Called in OnMediaOpened after the tracks are available but before Play. Index 0 means
         // "Auto (first track)" — no auto-selection is performed in that case.
@@ -1129,27 +1203,15 @@ namespace StremioCommunity
                     {
                         var tracks = item.AudioTracks;
                         int chosen = -1;
-                        // First pass: Language starts with the code (e.g. "es" matches "es-ES").
+                        // Exact match on the base language code, covering both ISO 639-1 and 639-2
+                        // (e.g. preference "es" matches track "es-ES" and "spa").
                         for (var i = 0; i < tracks.Count; i++)
                         {
                             var lang = tracks[i].Language ?? string.Empty;
-                            if (lang.StartsWith(code, StringComparison.OrdinalIgnoreCase))
+                            if (LanguageMatches(lang, code))
                             {
                                 chosen = i;
                                 break;
-                            }
-                        }
-                        // Second pass: Language contains the code.
-                        if (chosen < 0)
-                        {
-                            for (var i = 0; i < tracks.Count; i++)
-                            {
-                                var lang = tracks[i].Language ?? string.Empty;
-                                if (lang.Contains(code, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    chosen = i;
-                                    break;
-                                }
                             }
                         }
                         if (chosen >= 0 && tracks.SelectedIndex != chosen)
@@ -1181,28 +1243,32 @@ namespace StremioCommunity
                         if (subtitleIndices.Count > 0)
                         {
                             int chosenTrack = -1;
-                            // First pass: Language starts with the code.
+                            // First pass: exact base-language match (covers ISO 639-1 and 639-2,
+                            // e.g. preference "es" matches "spa" and "es-ES").
                             foreach (var ti in subtitleIndices)
                             {
                                 var lang = tracks[ti].Language ?? string.Empty;
-                                if (lang.StartsWith(code, StringComparison.OrdinalIgnoreCase))
+                                if (LanguageMatches(lang, code))
                                 {
                                     chosenTrack = ti;
                                     break;
                                 }
                             }
-                            // Second pass: Language or Label contains the code.
+                            // Second pass: the label often carries the language name (e.g. "Español",
+                            // "Spanish") even when the Language field is blank or a generic code.
                             if (chosenTrack < 0)
                             {
-                                foreach (var ti in subtitleIndices)
+                                var labelKeyword = LanguageLabelKeyword(CommunitySettings.LanguageLabels[subIdx]);
+                                if (labelKeyword != null)
                                 {
-                                    var lang = tracks[ti].Language ?? string.Empty;
-                                    var label = tracks[ti].Label ?? string.Empty;
-                                    if (lang.Contains(code, StringComparison.OrdinalIgnoreCase) ||
-                                        label.Contains(code, StringComparison.OrdinalIgnoreCase))
+                                    foreach (var ti in subtitleIndices)
                                     {
-                                        chosenTrack = ti;
-                                        break;
+                                        var label = (tracks[ti].Label ?? string.Empty).ToLowerInvariant();
+                                        if (label.Contains(labelKeyword, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            chosenTrack = ti;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -2042,6 +2108,16 @@ namespace StremioCommunity
         private PadButton _lastPadBtn;
         private int _lastPadBtnMs;
 
+        // The SubDelay/SubRate APIs are absent on the Xbox (and some Windows builds). We detect
+        // this on every ApplySubtitleTimingSpeed call, but only log the "not available" warning
+        // ONCE per app session so the session log stays readable (todo round 5 #2).
+        private bool _subtitleTimingApiUnavailableLogged;
+
+        // True when SubDelay/SubRate exist on this platform (PC: yes; Xbox: no). Default true so a
+        // fresh build works on PC before the first playback; ApplySubtitleTimingSpeed corrects it
+        // to false on the Xbox, and OpenSubtitleMenu then hides the delay/speed rows entirely.
+        private bool _subtitleTimingSupported = true;
+
         private void HandlePadButton(PadButton button)
         {
             // Deduplication (round 4 #1): if the same button was dispatched via another input
@@ -2513,9 +2589,14 @@ namespace StremioCommunity
 
             var rows = new List<string> { "Subtitles off" };
             rows.AddRange(labels);
-            // Adjustable rows at the bottom (todo.md #2/#3): subtitle delay and speed, applied live.
-            rows.Add("Subtitle delay  —  " + FormatSubDelay(CommunitySettings.SubtitleDelay));
-            rows.Add("Subtitle speed  —  " + FormatSubRate(CommunitySettings.SubtitleRate));
+            // Adjustable rows at the bottom (todo.md #2/#3): subtitle delay and speed, applied
+            // live. On the Xbox the SubDelay/SubRate APIs do not exist, so these rows would be
+            // no-ops — hide them entirely (todo round 5 #2).
+            if (_subtitleTimingSupported)
+            {
+                rows.Add("Subtitle delay  —  " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+                rows.Add("Subtitle speed  —  " + FormatSubRate(CommunitySettings.SubtitleRate));
+            }
             _subtitleTrackCount = 1 + labels.Count; // rows before the two adjustable rows
             _subtitleMenuIndex = Math.Min(Math.Max(current, 0), _subtitleTrackCount - 1);
             SubtitleMenuItems.Children.Clear();
