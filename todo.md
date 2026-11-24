@@ -1,4 +1,3 @@
-1. [x] Ahora los botones y direccionales al parecer se activan 2 veces al pulsar algo.
-2. [x] No se ponen automáticamente los subtítulos preferidos.
-3. [x] El retardo y velocidad de los subtítulos no hacen nada.
-4. [x] Sigue el problema de las doble pulsaciones.
+1. Volvió el problema que al dejar presionado el stick izquierdo en alguna dirección, se gatillan eventos que mueven la selección de la interfaz.
+2. [x] Sigue sin funcionar el retraso ni velocidad de los subtítulos.
+3. Sigue empezando la reproducción del video con los subtítulos en off y con la pista de audio en otro idioma, sin usar las preferencias de la cuenta.

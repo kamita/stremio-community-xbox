@@ -24,6 +24,12 @@ namespace StremioCommunity.Core
         /// <summary>Gets external subtitles collected from the stream and the user's subtitle addons.</summary>
         public IReadOnlyList<SubtitleSource> Subtitles { get; private set; } = new List<SubtitleSource>();
 
+        /// <summary>Account-level preferred subtitle language from the Stremio profile (ISO 639-1, e.g. "es").</summary>
+        public string PreferredSubLang { get; private set; } = string.Empty;
+
+        /// <summary>Account-level preferred audio language from the Stremio profile (ISO 639-1, e.g. "en").</summary>
+        public string PreferredAudioLang { get; private set; } = string.Empty;
+
         /// <summary>Builds a request from the shell script's "play" message.</summary>
         public static PlayRequest FromJson(JsonObject message)
         {
@@ -54,6 +60,8 @@ namespace StremioCommunity.Core
                 Description = message.GetNamedString("description", string.Empty),
                 FileName = message.GetNamedString("filename", string.Empty),
                 HasRequestHeaders = message.GetNamedBoolean("hasRequestHeaders", false),
+                PreferredSubLang = message.GetNamedString("preferredSubLang", string.Empty),
+                PreferredAudioLang = message.GetNamedString("preferredAudioLang", string.Empty),
             };
         }
 

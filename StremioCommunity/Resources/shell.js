@@ -529,8 +529,15 @@
             return;
         }
         var typing = isTyping(event.target);
-        var isArrow = /^Arrow/.test(event.key);
-        if ((isArrow && !(typing && (event.key === 'ArrowLeft' || event.key === 'ArrowRight'))) ||
+        // Xbox translates the left stick / D-pad into keyboard events. Depending on the device
+        // these arrive either as ArrowLeft/Right/Up/Down OR as key="Unidentified" with the
+        // standard arrow keyCodes (37=left, 38=up, 39=right, 40=down). Both forms must be
+        // blocked while the app's cursor owns input, otherwise the page receives them and
+        // moves the selection / focus behind the cursor (todo round 5 #1: 8BitDo remote).
+        var isArrow = /^Arrow/.test(event.key) || event.keyCode === 37 || event.keyCode === 38 ||
+                      event.keyCode === 39 || event.keyCode === 40;
+        if ((isArrow && !(typing && (event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
+                                     event.keyCode === 37 || event.keyCode === 39))) ||
             (event.key === 'Enter' && !typing) ||
             /^Gamepad/.test(event.key)) {
             event.preventDefault();
@@ -718,6 +725,8 @@
             history.back();
 
             collectSubtitles(stream, type, videoId).then(function (subtitles) {
+                var profile2 = readProfile();
+                var prefs = (profile2 && profile2.settings) || {};
                 post({
                     type: 'play',
                     url: stream.url,
@@ -725,7 +734,9 @@
                     description: stream.description || stream.title || '',
                     filename: hints.filename || '',
                     hasRequestHeaders: !!(hints.proxyHeaders && hints.proxyHeaders.request),
-                    subtitles: subtitles
+                    subtitles: subtitles,
+                    preferredSubLang: prefs.subtitlesLanguage || '',
+                    preferredAudioLang: prefs.defaultAudioLanguage || ''
                 });
             });
         }).catch(function (e) {

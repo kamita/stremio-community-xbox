@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,6 +113,9 @@ namespace StremioCommunity
         {
             InitializeComponent();
             Loaded += OnLoaded;
+            // Wire the subtitle timing modifier's diagnostic hook to the app log so
+            // we can see in session.log when the regex fails to match (todo round 7 #2).
+            SubtitleTimingModifier.OnDiagnostic = msg => Log("warn", msg);
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -873,7 +877,7 @@ namespace StremioCommunity
 
                 if (_attachSubtitles)
                 {
-                    AddExternalSubtitles(source, request);
+                    await AddExternalSubtitlesAsync(source, request);
                 }
                 else
                 {
@@ -886,6 +890,7 @@ namespace StremioCommunity
                     LogSubtitleTracks(sender2);
                     OnSubtitleTracksAvailable(sender2);
                 });
+
                 _lastSubtitleSelection = 0;
                 player.Source = item;
             }
@@ -982,111 +987,6 @@ namespace StremioCommunity
         {
             Log("warn", "Auto-continue: the shell does not expose the web queue yet (coming soon)");
             return Task.FromResult(false);
-        }
-
-        // ---- Subtitle timing / speed (todo.md #3) ----
-        // Applies the user's subtitle delay and speed to every subtitle track, then forces the
-        // currently-presented track to re-present so the new values actually take effect. The
-        // SubDelay / SubRate properties are not in the compile-time UWP reference, so they're set
-        // via reflection; this reports clearly when they're absent (so "no effect" is never silent).
-        private void ApplySubtitleTimingSpeed(MediaPlayer player)
-        {
-            try
-            {
-                if (!(player?.Source is MediaPlaybackItem item))
-                {
-                    return;
-                }
-
-                var tracks = item.TimedMetadataTracks;
-                var subtitleCount = 0;
-                var applied = 0;
-                var apiAvailable = true;
-                string firstError = null;
-
-                for (var i = 0; i < tracks.Count; i++)
-                {
-                    if (!IsSubtitleTrack(tracks[i]))
-                    {
-                        continue;
-                    }
-
-                    subtitleCount++;
-                    var t = tracks[i];
-                    var type = t.GetType();
-                    var delayProp = type.GetProperty("SubDelay");
-                    var rateProp = type.GetProperty("SubRate");
-                    if (delayProp == null && rateProp == null)
-                    {
-                        apiAvailable = false;
-                        continue;
-                    }
-
-                    try
-                    {
-                        if (delayProp != null)
-                        {
-                            delayProp.SetValue(t, TimeSpan.FromSeconds(CommunitySettings.SubtitleDelay));
-                        }
-
-                        if (rateProp != null)
-                        {
-                            rateProp.SetValue(t, (float)CommunitySettings.SubtitleRate);
-                        }
-
-                        applied++;
-                    }
-                    catch (System.Exception ex)
-                    {
-                        if (firstError == null)
-                        {
-                            firstError = ex.Message;
-                        }
-                    }
-                }
-
-                // NOTE (todo #3): previously we toggled the active track off->on here to "force"
-                // the renderer to pick up the new SubDelay/SubRate. That toggle opened a window
-                // where no subtitle track was presented, and Windows re-selected the first track —
-                // so subtitles visibly disappeared when the user stepped delay/speed. The renderer
-                // reads SubDelay/SubRate continuously at render time, so no re-presentation is
-                // needed; the values apply on the very next frame.
-
-                // Detect platform support: if the APIs are absent, remember it so the subtitle
-                // menu can hide the delay/speed rows (they cannot work on this device).
-                if (!apiAvailable)
-                {
-                    _subtitleTimingSupported = false;
-                }
-
-                if (subtitleCount == 0)
-                {
-                    Log("warn", "Subtitle delay/speed: no subtitle tracks present to adjust");
-                }
-                else if (!apiAvailable)
-                {
-                    // todo round 5 #2: the Xbox build does not expose SubDelay/SubRate. We detect
-                    // it on every call but log the warning only once so the session log stays
-                    // readable — the feature simply cannot work on this platform.
-                    if (!_subtitleTimingApiUnavailableLogged)
-                    {
-                        _subtitleTimingApiUnavailableLogged = true;
-                        Log("warn", "Subtitle delay/speed: SubDelay/SubRate API not available on this Windows version (Xbox build). Delay/speed controls are disabled on this device.");
-                    }
-                }
-                else if (firstError != null)
-                {
-                    Log("warn", "Subtitle delay/speed: " + firstError);
-                }
-                else
-                {
-                    Log("info", "Subtitle delay " + CommunitySettings.SubtitleDelay + " s / rate " + CommunitySettings.SubtitleRate + "x applied to " + applied + " of " + subtitleCount + " track(s)");
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Log("warn", "Could not apply subtitle timing/speed: " + ex.Message);
-            }
         }
 
         // NOTE (todo #3): the previous TryRepresentSubtitleTracks (off→on toggle) was REMOVED.
@@ -1187,123 +1087,195 @@ namespace StremioCommunity
             }
         }
 
-        // Auto-selects the audio / subtitle tracks that match the user's preferred language (todo #1).
-        // Called in OnMediaOpened after the tracks are available but before Play. Index 0 means
-        // "Auto (first track)" — no auto-selection is performed in that case.
-        private void ApplyPreferredLanguageTracks(MediaPlayer player)
+        // Applies ONLY the audio track (todo round 5 #3 / 6 #3): called in OnMediaOpened BEFORE
+        // Play() so the first frame already uses the right language. Uses the user's local
+        // preferred language first, falling back to the Stremio account's default audio language.
+        private void ApplyPreferredAudioTrack(MediaPlayer player)
         {
-            // ---- Audio ----
-            var audioIdx = CommunitySettings.PreferredAudioLangIndex;
-            if (audioIdx > 0)
+            // Resolve the effective language code to try.
+            var effectiveCode = ResolvePreferredLangCode(
+                CommunitySettings.PreferredAudioLangIndex,
+                _current?.PreferredAudioLang);
+            if (string.IsNullOrEmpty(effectiveCode))
             {
-                var code = CommunitySettings.LanguageCodes[audioIdx];
-                try
+                return; // Both local and account settings are "auto": no auto-selection.
+            }
+
+            try
+            {
+                if (!(player.Source is MediaPlaybackItem item) || item.AudioTracks.Count == 0)
                 {
-                    if (player.Source is MediaPlaybackItem item && item.AudioTracks.Count > 0)
+                    return;
+                }
+
+                var tracks = item.AudioTracks;
+                int chosen = -1;
+                for (var i = 0; i < tracks.Count; i++)
+                {
+                    var lang = tracks[i].Language ?? string.Empty;
+                    if (LanguageMatches(lang, effectiveCode))
                     {
-                        var tracks = item.AudioTracks;
-                        int chosen = -1;
-                        // Exact match on the base language code, covering both ISO 639-1 and 639-2
-                        // (e.g. preference "es" matches track "es-ES" and "spa").
+                        chosen = i;
+                        break;
+                    }
+                }
+                if (chosen < 0)
+                {
+                    var kw = LanguageLabelKeywordForCode(effectiveCode);
+                    if (kw != null)
+                    {
                         for (var i = 0; i < tracks.Count; i++)
                         {
-                            var lang = tracks[i].Language ?? string.Empty;
-                            if (LanguageMatches(lang, code))
+                            var label = tracks[i].Label ?? string.Empty;
+                            if (label.IndexOf(kw, StringComparison.OrdinalIgnoreCase) >= 0)
                             {
                                 chosen = i;
                                 break;
                             }
                         }
-                        if (chosen >= 0 && tracks.SelectedIndex != chosen)
-                        {
-                            tracks.SelectedIndex = chosen;
-                            Log("info", "Audio: auto-selected track " + (chosen + 1) +
-                                " (" + (tracks[chosen].Language ?? "?") + ") for preferred language \"" +
-                                CommunitySettings.LanguageLabels[audioIdx] + "\"");
-                        }
                     }
                 }
-                catch (Exception ex)
+                if (chosen >= 0 && tracks.SelectedIndex != chosen)
                 {
-                    Log("warn", "Audio language auto-select failed: " + ex.Message);
+                    tracks.SelectedIndex = chosen;
+                    Log("info", "Audio: auto-selected track " + (chosen + 1) +
+                        " (" + (tracks[chosen].Language ?? "?") + ") for language \"" + effectiveCode + "\"");
                 }
             }
-
-            // ---- Subtitles ----
-            var subIdx = CommunitySettings.PreferredSubLangIndex;
-            if (subIdx > 0)
+            catch (Exception ex)
             {
-                var code = CommunitySettings.LanguageCodes[subIdx];
-                try
+                Log("warn", "Audio auto-select failed: " + ex.Message);
+            }
+        }
+
+        // Returns the effective preferred language code: local setting first (index > 0),
+        // else the Stremio account's setting (if non-empty). Null/empty means "auto".
+        private static string ResolvePreferredLangCode(int localIndex, string accountLang)
+        {
+            if (localIndex > 0 && localIndex < CommunitySettings.LanguageCodes.Length)
+            {
+                var code = CommunitySettings.LanguageCodes[localIndex];
+                if (!string.IsNullOrEmpty(code))
                 {
-                    if (player.Source is MediaPlaybackItem item && item.TimedMetadataTracks.Count > 0)
+                    return code;
+                }
+            }
+            return string.IsNullOrEmpty(accountLang) ? null : accountLang.ToLowerInvariant();
+        }
+
+        // Keyword from a language code for fuzzy label matching (e.g. "es" -> "spani").
+        private static string LanguageLabelKeywordForCode(string code)
+        {
+            if (string.IsNullOrEmpty(code))
+            {
+                return null;
+            }
+            // If the code is a known index in LanguageCodes, use that label's keyword.
+            var idx = Array.IndexOf(CommunitySettings.LanguageCodes, code.ToLowerInvariant());
+            if (idx > 0)
+            {
+                return LanguageLabelKeyword(CommunitySettings.LanguageLabels[idx]);
+            }
+            return null;
+        }
+
+        // Auto-selects the SUBTITLE track matching the user's preferred language.
+        // Audio is handled in ApplyPreferredAudioTrack (called in OnMediaOpened).
+        // Falls back to the Stremio account's subtitle preference when local is "auto".
+        // Returns true if a track was selected; false if no match (caller should retry
+        // when more tracks arrive — todo round 6 #3).
+        private bool ApplyPreferredLanguageTracks(MediaPlayer player)
+        {
+            // ---- Subtitles ----
+            var effectiveCode = ResolvePreferredLangCode(
+                CommunitySettings.PreferredSubLangIndex,
+                _current?.PreferredSubLang);
+            if (string.IsNullOrEmpty(effectiveCode))
+            {
+                return true; // Both local and account are "auto": no auto-selection needed.
+            }
+            try
+            {
+                if (!(player.Source is MediaPlaybackItem item) || item.TimedMetadataTracks.Count == 0)
+                {
+                    // No tracks yet — will retry when more arrive (todo round 6 #3).
+                    return false;
+                }
+                var tracks = item.TimedMetadataTracks;
+                var subtitleIndices = GetOrderedSubtitleTrackIndices(item);
+                if (subtitleIndices.Count == 0)
+                {
+                    return false;
+                }
+
+                int chosenTrack = -1;
+                // First pass: exact base-language match.
+                foreach (var ti in subtitleIndices)
+                {
+                    var lang = tracks[ti].Language ?? string.Empty;
+                    if (LanguageMatches(lang, effectiveCode))
                     {
-                        var tracks = item.TimedMetadataTracks;
-                        var subtitleIndices = GetOrderedSubtitleTrackIndices(item);
-                        if (subtitleIndices.Count > 0)
+                        chosenTrack = ti;
+                        break;
+                    }
+                }
+                // Second pass: label contains the language name.
+                if (chosenTrack < 0)
+                {
+                    var kw = LanguageLabelKeywordForCode(effectiveCode);
+                    if (kw != null)
+                    {
+                        foreach (var ti in subtitleIndices)
                         {
-                            int chosenTrack = -1;
-                            // First pass: exact base-language match (covers ISO 639-1 and 639-2,
-                            // e.g. preference "es" matches "spa" and "es-ES").
-                            foreach (var ti in subtitleIndices)
+                            var label = (tracks[ti].Label ?? string.Empty).ToLowerInvariant();
+                            if (label.Contains(kw, StringComparison.OrdinalIgnoreCase))
                             {
-                                var lang = tracks[ti].Language ?? string.Empty;
-                                if (LanguageMatches(lang, code))
-                                {
-                                    chosenTrack = ti;
-                                    break;
-                                }
-                            }
-                            // Second pass: the label often carries the language name (e.g. "Español",
-                            // "Spanish") even when the Language field is blank or a generic code.
-                            if (chosenTrack < 0)
-                            {
-                                var labelKeyword = LanguageLabelKeyword(CommunitySettings.LanguageLabels[subIdx]);
-                                if (labelKeyword != null)
-                                {
-                                    foreach (var ti in subtitleIndices)
-                                    {
-                                        var label = (tracks[ti].Label ?? string.Empty).ToLowerInvariant();
-                                        if (label.Contains(labelKeyword, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            chosenTrack = ti;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            if (chosenTrack >= 0)
-                            {
-                                // Enable the chosen track FIRST, then disable the others. Reversing
-                                // the order (disable-all-then-enable) opened a window with zero
-                                // tracks presented, and Windows re-selected the first track —
-                                // defeating the preferred-language choice (todo #2).
-                                tracks.SetPresentationMode((uint)chosenTrack, TimedMetadataTrackPresentationMode.PlatformPresented);
-                                foreach (var ti in subtitleIndices)
-                                {
-                                    if (ti == chosenTrack)
-                                    {
-                                        continue;
-                                    }
-                                    tracks.SetPresentationMode((uint)ti, TimedMetadataTrackPresentationMode.Disabled);
-                                }
-                                _lastSubtitleSelection = subtitleIndices.IndexOf(chosenTrack) + 1;
-                                Log("info", "Subtitles: auto-selected \"" +
-                                    (tracks[chosenTrack].Label ?? tracks[chosenTrack].Language ?? "?") +
-                                    "\" for preferred language \"" + CommunitySettings.LanguageLabels[subIdx] + "\"");
-                            }
-                            else
-                            {
-                                Log("warn", "Subtitles: no track matched preferred language \"" +
-                                    CommunitySettings.LanguageLabels[subIdx] + "\" — leaving as the player defaults");
+                                chosenTrack = ti;
+                                break;
                             }
                         }
                     }
                 }
-                catch (Exception ex)
+                // Third pass (todo round 5 #3): addon labels are "<lang> (addon-name)"
+                // or "<lang> (stream)"; match the 2-letter code at the start.
+                if (chosenTrack < 0)
                 {
-                    Log("warn", "Subtitle language auto-select failed: " + ex.Message);
+                    foreach (var ti in subtitleIndices)
+                    {
+                        var label = (tracks[ti].Label ?? string.Empty).Trim();
+                        if (label.Length >= 2 &&
+                            label.Substring(0, 2).Equals(effectiveCode, StringComparison.OrdinalIgnoreCase))
+                        {
+                            chosenTrack = ti;
+                            break;
+                        }
+                    }
                 }
+
+                if (chosenTrack >= 0)
+                {
+                    tracks.SetPresentationMode((uint)chosenTrack, TimedMetadataTrackPresentationMode.PlatformPresented);
+                    foreach (var ti in subtitleIndices)
+                    {
+                        if (ti == chosenTrack)
+                        {
+                            continue;
+                        }
+                        tracks.SetPresentationMode((uint)ti, TimedMetadataTrackPresentationMode.Disabled);
+                    }
+                    _lastSubtitleSelection = subtitleIndices.IndexOf(chosenTrack) + 1;
+                    Log("info", "Subtitles: auto-selected \"" +
+                        (tracks[chosenTrack].Label ?? tracks[chosenTrack].Language ?? "?") +
+                        "\" for language \"" + effectiveCode + "\"");
+                    return true;
+                }
+                Log("warn", "Subtitles: no track matched language \"" + effectiveCode + "\" — leaving as the player defaults");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log("warn", "Subtitle language auto-select failed: " + ex.Message);
+                return false;
             }
         }
 
@@ -1516,9 +1488,15 @@ namespace StremioCommunity
                     ShowOsd("Resumed from " + _resumePosition.ToString(@"hh\:mm\:ss"));
                 }
 
+                // TODO round 5 #3: apply preferred AUDIO track BEFORE Play so the first
+                // frame already uses the right language. Embedded audio tracks are available
+                // at MediaOpened time. Subtitles are handled in OnSubtitleTracksAvailable.
+                ApplyPreferredAudioTrack(sender);
+
                 sender.Play();
                 StartDiagnostics();
                 ShowOsd();
+
                 if (restartSeek > 0)
                 {
                     await RestartSeekAfterPlayAsync(sender, restartSeek);
@@ -2108,16 +2086,6 @@ namespace StremioCommunity
         private PadButton _lastPadBtn;
         private int _lastPadBtnMs;
 
-        // The SubDelay/SubRate APIs are absent on the Xbox (and some Windows builds). We detect
-        // this on every ApplySubtitleTimingSpeed call, but only log the "not available" warning
-        // ONCE per app session so the session log stays readable (todo round 5 #2).
-        private bool _subtitleTimingApiUnavailableLogged;
-
-        // True when SubDelay/SubRate exist on this platform (PC: yes; Xbox: no). Default true so a
-        // fresh build works on PC before the first playback; ApplySubtitleTimingSpeed corrects it
-        // to false on the Xbox, and OpenSubtitleMenu then hides the delay/speed rows entirely.
-        private bool _subtitleTimingSupported = true;
-
         private void HandlePadButton(PadButton button)
         {
             // Deduplication (round 4 #1): if the same button was dispatched via another input
@@ -2451,15 +2419,28 @@ namespace StremioCommunity
             }
         }
 
-        private void AddExternalSubtitles(MediaSource source, PlayRequest request)
+        private async Task AddExternalSubtitlesAsync(MediaSource source, PlayRequest request)
         {
+            var delay = CommunitySettings.SubtitleDelay;
+            var rate = CommunitySettings.SubtitleRate;
+            var needsTiming = Math.Abs(delay) >= 0.001 || Math.Abs(rate - 1.0) >= 0.001;
+
             foreach (var subtitle in request.Subtitles)
             {
+                var label = string.IsNullOrEmpty(subtitle.Label) ? subtitle.Language : subtitle.Label;
                 try
                 {
-                    var label = string.IsNullOrEmpty(subtitle.Label) ? subtitle.Language : subtitle.Label;
-                    var language = subtitle.Language;
-                    var timedText = TimedTextSource.CreateFromUri(new Uri(subtitle.Url));
+                    TimedTextSource timedText;
+                    if (needsTiming)
+                    {
+                        var localPath = await DownloadSubtitleToLocalAsync(subtitle.Url, delay, rate);
+                        timedText = TimedTextSource.CreateFromUri(new Uri(localPath ?? subtitle.Url));
+                    }
+                    else
+                    {
+                        timedText = TimedTextSource.CreateFromUri(new Uri(subtitle.Url));
+                    }
+
                     timedText.Resolved += (sender, args) =>
                     {
                         if (args.Error != null)
@@ -2467,7 +2448,6 @@ namespace StremioCommunity
                             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Log("warn", "Subtitle failed (" + label + "): " + args.Error.ErrorCode));
                             return;
                         }
-
                         foreach (var track in args.Tracks)
                         {
                             track.Label = label;
@@ -2481,10 +2461,214 @@ namespace StremioCommunity
                 }
             }
 
-            Log("info", "External subtitles: " + request.Subtitles.Count);
+            Log("info", "External subtitles: " + request.Subtitles.Count +
+                (needsTiming ? " (timing: " + delay + "s / " + rate + "x)" : ""));
         }
 
-        // Guards for OnSubtitleTracksAvailable (todo round 4 #2/#3): the per-playback flag
+        // Reads an IHttpContent as a UTF-8 string via ReadAsInputStreamAsync, reading the
+        // returned IBuffer in blocks — the same approach BufferedHttpStream.cs uses
+        // successfully (avoids AsBuffer, which is unavailable on the Xbox UWP build).
+        private async Task<string> ReadHttpContentAsString(Windows.Web.Http.IHttpContent content)
+        {
+            using (var stream = await content.ReadAsInputStreamAsync())
+            {
+                var parts = new System.Collections.Generic.List<byte>();
+                var blockBuffer = new Windows.Storage.Streams.Buffer(64 * 1024);
+                const int maxBytes = 10 * 1024 * 1024; // 10 MB safety cap
+                while (parts.Count < maxBytes)
+                {
+                    var read = await stream.ReadAsync(blockBuffer, 64 * 1024, Windows.Storage.Streams.InputStreamOptions.None);
+                    if (read.Length == 0)
+                    {
+                        break;
+                    }
+                    var block = new byte[read.Length];
+                    read.CopyTo(0, block, 0, (int)read.Length);
+                    parts.AddRange(block);
+                }
+                return System.Text.Encoding.UTF8.GetString(parts.ToArray());
+            }
+        }
+
+        // Downloads a subtitle, applies delay/speed, saves to the app's temp folder.
+        // MUST run on the UI thread: Windows.Web.Http.HttpClient and the Windows.Storage APIs
+        // are apartment-threaded in UWP and throw RPC_E_WRONG_THREAD off the UI thread.
+        // (System.Net.Http.HttpClient + Task.Run failed with "Value does not fall within the
+        // expected range" on the Xbox — todo round 6 #2.)
+        // Returns the local file path (ms-appdata:///temp/...) on success, null on failure.
+        private async Task<string> DownloadSubtitleToLocalAsync(string url, double delay, double rate)
+        {
+            try
+            {
+                using (var client = new Windows.Web.Http.HttpClient())
+                {
+                    var response = await client.GetAsync(new Uri(url));
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return null;
+                    }
+                    var content = await ReadHttpContentAsString(response.Content);
+                    if (string.IsNullOrEmpty(content))
+                    {
+                        Log("warn", "Subtitle download: empty content");
+                        return null;
+                    }
+                    var modified = SubtitleTimingModifier.Modify(content, delay, rate);
+                    if (modified == content)
+                    {
+                        Log("warn", string.Format("Subtitle download: no timestamps matched (len={0}, head=\"{1}\")",
+                            content.Length, content.Substring(0, Math.Min(120, content.Length))));
+                        return null;
+                    }
+                    Log("info", string.Format("Subtitle download: modified {0} chars -> {1} chars (head=\"{2}\")",
+                        content.Length, modified.Length, modified.Substring(0, Math.Min(120, modified.Length))));
+
+                    var ext = System.IO.Path.GetExtension(new Uri(url).LocalPath);
+                    if (string.IsNullOrEmpty(ext) || ext.Length > 5) ext = ".srt";
+                    var fileName = "sub_" + Guid.NewGuid().ToString("N") + ext;
+                    var folder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+                    var file = await folder.CreateFileAsync(fileName, Windows.Storage.CreationCollisionOption.ReplaceExisting);
+                    await Windows.Storage.FileIO.WriteTextAsync(file, modified);
+                    return file.Path; // ms-appdata:///temp/sub_xxx.srt
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("warn", "Subtitle download failed: " + ex.Message);
+                return null;
+            }
+        }
+
+        // ---- Subtitle delay / speed via content modification (todo round 5 #2) ----
+        // On the Xbox, TimedMetadataTrack.SubDelay and .SubRate are absent. The working
+        // path is to download each subtitle, rewrite SRT/VTT cue timings with
+        // SubtitleTimingModifier, save to a local temp file, and feed the player via
+        // TimedTextSource.CreateFromUri(localPath).
+        //
+        // Live re-apply: when the user steps delay/speed from the subtitle menu, we
+        // rebuild the entire MediaPlaybackItem with new local subtitle files and swap
+        // MediaPlayer.Source (which IS settable, unlike MediaPlaybackItem.Source).
+        // Guard against overlapping calls (the user can step delay/speed rapidly). todo round 6 #2.
+        private bool _retimeInProgress;
+
+        private async Task ReapplySubtitleTimingAsync()
+        {
+            if (_mediaPlayer == null || _current == null || _current.Subtitles.Count == 0)
+            {
+                return;
+            }
+            if (_retimeInProgress)
+            {
+                return; // A re-time is already running; drop this one.
+            }
+
+            var request = _current;
+            var delay = CommunitySettings.SubtitleDelay;
+            var rate = CommunitySettings.SubtitleRate;
+
+            if (Math.Abs(delay) < 0.001 && Math.Abs(rate - 1.0) < 0.001)
+            {
+                Log("info", "Subtitle timing: back to defaults, no rewrite needed");
+                return;
+            }
+
+            _retimeInProgress = true;
+            try
+            {
+                Log("info", "Subtitle re-time: downloading with delay " + delay + "s / rate " + rate + "x");
+
+                var session = _mediaPlayer.PlaybackSession;
+                var wasPlaying = session.PlaybackState == MediaPlaybackState.Playing;
+                if (wasPlaying)
+                {
+                    _mediaPlayer.Pause();
+                }
+                var position = session.Position;
+
+                // Download + modify each subtitle SEQUENTIALLY on the UI thread.
+                // Windows.Web.Http and the Storage APIs are apartment-threaded in UWP;
+                // off-thread they throw RPC_E_WRONG_THREAD (todo round 6 #2).
+                var subCount = request.Subtitles.Count;
+                var localPaths = new string[subCount];
+                for (var i = 0; i < subCount; i++)
+                {
+                    localPaths[i] = await DownloadSubtitleToLocalAsync(request.Subtitles[i].Url, delay, rate);
+                }
+
+                // Build a new MediaSource with the video URL + local subtitle files.
+                var newSource = MediaSource.CreateFromUri(new Uri(request.Url));
+                var addedCount = 0;
+                for (var i = 0; i < subCount; i++)
+                {
+                    var sub = request.Subtitles[i];
+                    var label = string.IsNullOrEmpty(sub.Label) ? sub.Language : sub.Label;
+                    var uri = localPaths[i] != null ? new Uri(localPaths[i]) : new Uri(sub.Url);
+                    var timedText = TimedTextSource.CreateFromUri(uri);
+                    timedText.Resolved += (sender, args) =>
+                    {
+                        if (args.Error != null)
+                        {
+                            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Log("warn", "Subtitle re-time failed (" + label + "): " + args.Error.ErrorCode));
+                            return;
+                        }
+                        foreach (var track in args.Tracks)
+                        {
+                            track.Label = label;
+                        }
+                    };
+                    newSource.ExternalTimedTextSources.Add(timedText);
+                    addedCount++;
+                }
+
+                var newItem = new MediaPlaybackItem(newSource);
+                newItem.TimedMetadataTracksChanged += (s2, a2) => _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    LogSubtitleTracks(s2 as MediaPlaybackItem);
+                    OnSubtitleTracksAvailable(s2 as MediaPlaybackItem);
+                });
+
+                // Swap MediaPlayer.Source (settable on Xbox, unlike MediaPlaybackItem.Source).
+                if (_mediaPlayer != null)
+                {
+                    _mediaPlayer.Source = newItem;
+                }
+
+                // Wait for the new source to open, then restore state.
+                var deadline = DateTime.UtcNow.AddSeconds(5);
+                while (_mediaPlayer != null && !(_mediaPlayer.Source is MediaPlaybackItem) && DateTime.UtcNow < deadline)
+                {
+                    await Task.Delay(100);
+                }
+
+                if (_mediaPlayer != null && _mediaPlayer.Source is MediaPlaybackItem)
+                {
+                    ApplyPreferredAudioTrack(_mediaPlayer);
+                    if (position > TimeSpan.Zero)
+                    {
+                        _mediaPlayer.PlaybackSession.Position = position;
+                    }
+                    if (wasPlaying)
+                    {
+                        _mediaPlayer.Play();
+                    }
+                    Log("info", "Subtitle re-time: applied delay " + delay + "s / rate " + rate + "x to " + addedCount + " subtitle(s)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("warn", "Subtitle re-time failed: " + ex.Message);
+                if (_mediaPlayer != null)
+                {
+                    _mediaPlayer.Play();
+                }
+            }
+            finally
+            {
+                _retimeInProgress = false;
+            }
+        }
+
+        // Guards for OnSubtitleTracksAvailable (todo round 5 #3): the per-playback flag
         // prevents the auto-select + timing/speed block from re-firing on subsequent
         // TimedMetadataTracksChanged events (e.g. a late-arriving second batch of tracks).
         private MediaPlaybackItem _subtitlePrefItem;
@@ -2504,7 +2688,8 @@ namespace StremioCommunity
                 return;
             }
 
-            if (item != _subtitlePrefItem)
+            var isNew = item != _subtitlePrefItem;
+            if (isNew)
             {
                 _subtitlePrefItem = item;
                 _subtitlePrefApplied = false;
@@ -2515,22 +2700,77 @@ namespace StremioCommunity
                 return;
             }
 
-            if (_mediaPlayer?.Source != item)
-            {
-                return; // Another playback replaced this item; do not touch it.
-            }
+            // NOTE: we no longer check _mediaPlayer.Source == item here. UWP's internal
+            // wrapping can make the reference comparison fail even when the item IS the
+            // active source. The TimedMetadataTracksChanged event is only attached to a
+            // specific item, so if the playback was replaced this event won't fire for it.
 
             // Only auto-select if the user hasn't already picked a track manually for this
             // playback — a manual choice (made before this event) takes precedence.
             var userChose = _lastSubtitleSelection > 0;
             if (!userChose)
             {
-                ApplyPreferredLanguageTracks(_mediaPlayer);
+                var selected = ApplyPreferredLanguageTracks(_mediaPlayer);
+                if (selected)
+                {
+                    _subtitlePrefApplied = true;
+                }
             }
+            else
+            {
+                // The user picked a track manually (possibly on the PREVIOUS item before a
+                // re-time swap). Restore that selection on this new item so the user's
+                // choice survives subtitle delay/speed changes (todo round 7 #3).
+                // Tracks arrive progressively — only restore once enough tracks are present.
+                var indices = GetOrderedSubtitleTrackIndices(item);
+                if (indices.Count >= _lastSubtitleSelection)
+                {
+                    TryRestoreManualSubtitleSelection(item, _lastSubtitleSelection);
+                    _subtitlePrefApplied = true;
+                }
+                else
+                {
+                    Log("info", "Subtitle selection pending: have " + indices.Count +
+                        " tracks, need " + _lastSubtitleSelection + " — waiting for more");
+                }
+            }
+        }
 
-            // Always apply the saved SubDelay / SubRate now that the tracks are present.
-            ApplySubtitleTimingSpeed(_mediaPlayer);
-            _subtitlePrefApplied = true;
+        // Re-applies the user's manual subtitle selection (1-based row) to a fresh
+        // MediaPlaybackItem after a re-time swap. The caller must ensure the item
+        // has at least `row` subtitle tracks available.
+        private void TryRestoreManualSubtitleSelection(MediaPlaybackItem item, int row)
+        {
+            if (item == null || row <= 0)
+            {
+                return;
+            }
+            try
+            {
+                var tracks = item.TimedMetadataTracks;
+                var indices = GetOrderedSubtitleTrackIndices(item);
+                if (row > indices.Count)
+                {
+                    row = indices.Count; // Safety clamp.
+                }
+                var trackIndex = indices[row - 1];
+                // Enable the chosen track FIRST, then disable the others (avoids a
+                // zero-track window where Windows would re-select the first track).
+                tracks.SetPresentationMode((uint)trackIndex, TimedMetadataTrackPresentationMode.PlatformPresented);
+                foreach (var index in indices)
+                {
+                    if (index != trackIndex)
+                    {
+                        tracks.SetPresentationMode((uint)index, TimedMetadataTrackPresentationMode.Disabled);
+                    }
+                }
+                Log("info", "Subtitle selection restored: row " + row +
+                    " (" + DescribeSubtitle(tracks[trackIndex]) + ")");
+            }
+            catch (Exception ex)
+            {
+                Log("warn", "Could not restore manual subtitle selection: " + ex.Message);
+            }
         }
 
         private static bool IsSubtitleTrack(TimedMetadataTrack track)
@@ -2590,13 +2830,10 @@ namespace StremioCommunity
             var rows = new List<string> { "Subtitles off" };
             rows.AddRange(labels);
             // Adjustable rows at the bottom (todo.md #2/#3): subtitle delay and speed, applied
-            // live. On the Xbox the SubDelay/SubRate APIs do not exist, so these rows would be
-            // no-ops — hide them entirely (todo round 5 #2).
-            if (_subtitleTimingSupported)
-            {
-                rows.Add("Subtitle delay  —  " + FormatSubDelay(CommunitySettings.SubtitleDelay));
-                rows.Add("Subtitle speed  —  " + FormatSubRate(CommunitySettings.SubtitleRate));
-            }
+            // live via content rewrite (SubtitleTimingModifier) — works on the Xbox where the
+            // SubDelay/SubRate APIs are absent.
+            rows.Add("Subtitle delay  —  " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+            rows.Add("Subtitle speed  —  " + FormatSubRate(CommunitySettings.SubtitleRate));
             _subtitleTrackCount = 1 + labels.Count; // rows before the two adjustable rows
             _subtitleMenuIndex = Math.Min(Math.Max(current, 0), _subtitleTrackCount - 1);
             SubtitleMenuItems.Children.Clear();
@@ -2701,8 +2938,8 @@ namespace StremioCommunity
                     var next = CommunitySettings.SubtitleDelay + 0.5;
                     if (next > 30) next = -30;
                     CommunitySettings.SubtitleDelay = next;
-                    ApplySubtitleTimingSpeed(_mediaPlayer);
                     ShowOsd("Subtitle delay: " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+                    _ = ReapplySubtitleTimingAsync();
                 }
                 else
                 {
@@ -2710,8 +2947,8 @@ namespace StremioCommunity
                     var next = Math.Round(CommunitySettings.SubtitleRate + 0.05, 2);
                     if (next > 2.0) next = 0.5;
                     CommunitySettings.SubtitleRate = next;
-                    ApplySubtitleTimingSpeed(_mediaPlayer);
                     ShowOsd("Subtitle speed: " + FormatSubRate(CommunitySettings.SubtitleRate));
+                    _ = ReapplySubtitleTimingAsync();
                 }
                 RebuildSubtitleValueRows();
                 return;
@@ -2863,8 +3100,8 @@ namespace StremioCommunity
                 if (next > 30) next = -30;
                 if (next < -30) next = 30;
                 CommunitySettings.SubtitleDelay = Math.Round(next, 2);
-                ApplySubtitleTimingSpeed(_mediaPlayer);
                 ShowOsd("Subtitle delay: " + FormatSubDelay(CommunitySettings.SubtitleDelay));
+                _ = ReapplySubtitleTimingAsync();
             }
             else
             {
@@ -2873,8 +3110,8 @@ namespace StremioCommunity
                 if (next > 2.0) next = 0.5;
                 if (next < 0.5) next = 2.0;
                 CommunitySettings.SubtitleRate = next;
-                ApplySubtitleTimingSpeed(_mediaPlayer);
                 ShowOsd("Subtitle speed: " + FormatSubRate(CommunitySettings.SubtitleRate));
+                _ = ReapplySubtitleTimingAsync();
             }
             RebuildSubtitleValueRows();
         }
