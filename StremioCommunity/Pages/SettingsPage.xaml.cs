@@ -6,6 +6,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace StremioCommunity.Pages
 {
@@ -27,18 +28,32 @@ namespace StremioCommunity.Pages
         public SettingsPage()
         {
             InitializeComponent();
-            Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private bool _loaded;
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Loaded -= OnLoaded;
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             _gamepad.Pressed += OnPadButton;
             _gamepad.Start();
-            _settings = new SettingsPanelController(SettingsItems, msg => Log(msg));
-            _settings.Open();
+            base.OnNavigatedTo(e);
+
+            if (!_loaded)
+            {
+                _loaded = true;
+                _settings = new SettingsPanelController(SettingsItems, msg => Log(msg));
+                _settings.Open();
+            }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
+            _gamepad.Stop();
+            base.OnNavigatedFrom(e);
         }
 
         private static void Log(string message)

@@ -18,6 +18,7 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace StremioCommunity.Pages
 {
@@ -104,14 +105,33 @@ namespace StremioCommunity.Pages
             SubtitleTimingModifier.OnDiagnostic = msg => Log("warn", msg);
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Attach the app-global input handlers (CoreWindow accelerator keys, system back,
+        /// gamepad) only while this page is current, and detach them on navigation away.
+        /// Without this, every page in the Frame's back-stack would receive the same global
+        /// input event, causing duplicate/stale actions (e.g. pressing A on the player would
+        /// also fire a stale Home page's "activate" handler).
+        /// </summary>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Loaded -= OnLoaded;
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             _gamepad.Pressed += OnPadButton;
             _gamepad.Start();
+            base.OnNavigatedTo(e);
+        }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
+            _gamepad.Stop();
+            base.OnNavigatedFrom(e);
+        }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnLoaded;
             Log("info", DisplayModeManager.DescribeDisplay());
             UpdateDebugHeader();
 

@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 namespace StremioCommunity.Pages
 {
@@ -39,7 +40,7 @@ namespace StremioCommunity.Pages
 
         private readonly GamepadInput _gamepad = new GamepadInput();
         private readonly StremioApiClient _api = new StremioApiClient();
-        private SettingsPanelController _settings; // created in OnLoaded (needs the XAML panel)
+        private SettingsPanelController _settings; // created in OnNavigatedTo (needs the XAML panel)
 
         private StremioMeta _meta;
         private StremioProfile _profile;
@@ -67,25 +68,39 @@ namespace StremioCommunity.Pages
         {
             _navArgs = navArgs;
             InitializeComponent();
-            Loaded += OnLoaded;
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private bool _loaded; // one-time guard: load runs on first entry, not on every back-stack re-entry
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Loaded -= OnLoaded;
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             _gamepad.Pressed += OnPadButton;
             _gamepad.Start();
-            _settings = new SettingsPanelController(SettingsItems, msg => Log("info", msg));
+            base.OnNavigatedTo(e);
 
-            var args = _navArgs ?? new Args { Type = "movie", Id = string.Empty };
-            var type = args.Type ?? "movie";
-            var id = args.Id ?? string.Empty;
-            _profile = args.Profile;
+            if (!_loaded)
+            {
+                _loaded = true;
+                _settings = new SettingsPanelController(SettingsItems, msg => Log("info", msg));
 
-            Log("info", "Detail " + type + " " + id);
-            await LoadAsync(type, id);
+                var args = _navArgs ?? new Args { Type = "movie", Id = string.Empty };
+                var type = args.Type ?? "movie";
+                var id = args.Id ?? string.Empty;
+                _profile = args.Profile;
+
+                Log("info", "Detail " + type + " " + id);
+                _ = LoadAsync(type, id);
+            }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
+            _gamepad.Stop();
+            base.OnNavigatedFrom(e);
         }
 
         // ---- Data ------------------------------------------------------------------------------

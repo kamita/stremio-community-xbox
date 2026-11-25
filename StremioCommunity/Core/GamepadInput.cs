@@ -53,6 +53,20 @@ namespace StremioCommunity.Core
             _timer.Start();
         }
 
+        /// <summary>
+        /// Stops the polling timer and clears both events. Call this when the page that
+        /// owns this instance leaves the visual tree (OnNavigatedFrom) so the DispatcherTimer
+        /// (60 Hz) stops and the page's Pressed/Polled handlers are no longer invoked.
+        /// Without this, every page in the Frame's back-stack keeps polling XInput forever
+        /// (CPU/memory leak) and receives duplicate input from the shared gamepad.
+        /// </summary>
+        public void Stop()
+        {
+            _timer.Stop();
+            Pressed = null;
+            Polled = null;
+        }
+
         private void Poll()
         {
             var pad = Gamepad.Gamepads.FirstOrDefault();

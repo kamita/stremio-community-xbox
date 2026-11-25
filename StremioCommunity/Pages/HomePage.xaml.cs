@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Interop;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 namespace StremioCommunity.Pages
 {
@@ -32,7 +33,7 @@ namespace StremioCommunity.Pages
 
         private readonly GamepadInput _gamepad = new GamepadInput();
         private readonly StremioApiClient _api = new StremioApiClient();
-        private SettingsPanelController _settings; // created in OnLoaded (needs the XAML panel)
+        private SettingsPanelController _settings; // created in OnNavigatedTo (needs the XAML panel)
         private readonly object _logLock = new object();
         private readonly List<string> _log = new List<string>();
 
@@ -69,7 +70,6 @@ namespace StremioCommunity.Pages
         public HomePage()
         {
             InitializeComponent();
-            Loaded += OnLoaded;
             SubtitleTimingModifier.OnDiagnostic = msg => Log("warn", msg);
             SearchBox.GotFocus += (s, a) => _searchBoxFocused = true;
             SearchBox.LostFocus += (s, a) =>
@@ -82,16 +82,31 @@ namespace StremioCommunity.Pages
             };
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private bool _loaded; // one-time guard: load runs on first entry, not on every back-stack re-entry
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Loaded -= OnLoaded;
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             _gamepad.Pressed += OnPadButton;
             _gamepad.Start();
-            _settings = new SettingsPanelController(SettingsItems, msg => Log("info", msg));
-            Log("info", DisplayModeManager.DescribeDisplay());
-            await LoadTabsAsync();
+            base.OnNavigatedTo(e);
+
+            if (!_loaded)
+            {
+                _loaded = true;
+                _settings = new SettingsPanelController(SettingsItems, msg => Log("info", msg));
+                Log("info", DisplayModeManager.DescribeDisplay());
+                _ = LoadTabsAsync();
+            }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
+            _gamepad.Stop();
+            base.OnNavigatedFrom(e);
         }
 
         // ---- Data loading ---------------------------------------------------------------------
