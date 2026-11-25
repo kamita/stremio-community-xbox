@@ -1,0 +1,19 @@
+<Page
+    x:Class="StremioCommunity.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Black">
+
+    <!-- Standalone settings page: the same rows as the Home/Detail overlays.
+         D-pad moves, LB/RB adjust numbers/cycles, A toggles/steps, B goes back. -->
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="820" MinWidth="520"
+          Margin="0,0,0,60">
+        <StackPanel>
+            <TextBlock FontSize="30" Foreground="#FFD54F" Margin="0,0,0,18" Text="Settings" />
+            <StackPanel x:Name="SettingsItems" />
+            <TextBlock FontSize="16" Foreground="#88FFFFFF" Margin="0,20,0,0"
+                       Text="D-pad: move   LB/RB: value   A: toggle   B: close" />
+            <TextBlock x:Name="StatusText" FontSize="16" Foreground="#88FFFFFF" Margin="0,8,0,0" />
+        </StackPanel>
+    </Grid>
+</Page>

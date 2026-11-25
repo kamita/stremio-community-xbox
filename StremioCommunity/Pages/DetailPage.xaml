@@ -1,0 +1,65 @@
+<Page
+    x:Class="StremioCommunity.Pages.DetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Black">
+
+    <Grid Margin="64,32,64,48">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="360" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Meta info: poster + name / release / rating / description / genres / cast. -->
+        <StackPanel Grid.Column="0" Margin="0,0,40,0">
+            <Border x:Name="PosterBorder" Width="340" Height="480" CornerRadius="6"
+                    Background="#1E1E28" HorizontalAlignment="Center">
+                <Image x:Name="PosterImage" Stretch="Uniform" />
+            </Border>
+
+            <TextBlock x:Name="Title" FontSize="26" FontWeight="Bold" Foreground="White"
+                       TextWrapping="Wrap" Margin="0,18,0,6" HorizontalAlignment="Center" />
+            <TextBlock x:Name="ReleaseInfo" FontSize="19" Foreground="#FFD54F"
+                       HorizontalAlignment="Center" Margin="0,0,0,10" />
+            <TextBlock x:Name="Rating" FontSize="18" Foreground="#CCFFFFFF"
+                       HorizontalAlignment="Center" Margin="0,0,0,12" />
+            <TextBlock x:Name="Description" FontSize="16" Foreground="#CCFFFFFF"
+                       TextWrapping="Wrap" Margin="0,0,0,12" />
+            <TextBlock x:Name="Genres" FontSize="15" Foreground="#88FFFFFF"
+                       TextWrapping="Wrap" Margin="0,0,0,8" />
+            <TextBlock x:Name="Cast" FontSize="15" Foreground="#88FFFFFF"
+                       TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- Rows: episodes (series) or streams (movie / episode). Highlighted row in gold. -->
+        <StackPanel Grid.Column="1">
+            <TextBlock x:Name="ListHeader" FontSize="22" Foreground="#FFD54F" Margin="0,0,0,14" />
+            <ScrollViewer x:Name="ListScroll" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled" MaxHeight="900">
+                <StackPanel x:Name="ListItems" />
+            </ScrollViewer>
+            <TextBlock FontSize="15" Foreground="#88FFFFFF" Margin="0,14,0,0"
+                       Text="D-pad: move   A: open / play   B: back" />
+        </StackPanel>
+
+        <!-- Settings panel (Y): same rows as the Home page. -->
+        <Border
+            x:Name="SettingsPanelGrid"
+            Visibility="Collapsed"
+            Background="#E6000000"
+            BorderBrush="#7B5BF5"
+            BorderThickness="2"
+            CornerRadius="8"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            MaxWidth="820"
+            MinWidth="520"
+            Padding="28,22">
+            <StackPanel>
+                <TextBlock FontSize="24" Foreground="#FFD54F" Margin="0,0,0,14" Text="Settings" />
+                <StackPanel x:Name="SettingsItems" />
+                <TextBlock FontSize="16" Foreground="#88FFFFFF" Margin="0,16,0,0" Text="D-pad: move   LB/RB: value   A: toggle   B: close" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

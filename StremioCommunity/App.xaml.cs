@@ -17,14 +17,11 @@ namespace StremioCommunity
             FileLog.Start();
             FileLog.Write("info", "App starting");
 
-            // Render at 1:1 so Stremio Web lays out at 1920x1080 rather than the Xbox's default 200% scale.
+            // Render at 1:1 so the XAML layout lands at 1920x1080 rather than the Xbox's default 200% scale.
             FileLog.Write("info", "Layout scaling disabled: " + ApplicationViewScaling.TrySetDisableLayoutScaling(true));
 
-            // No Xbox system cursor: controller navigation and the app's own cursor are handled in MainPage
-            // (per-control RequiresPointer on the WebView2 never showed a cursor).
-            // System cursor (Right in the debug log, saved, applies at launch): leave the app-wide pointer mode
-            // at its default like the initial build, where the Xbox cursor clicked fields for real and the
-            // keyboard typed into them.
+            // No Xbox system cursor by default: the native XAML pages handle controller navigation
+            // themselves (D-pad + face buttons), so the system pointer would only add a ghost dot.
             var systemCursor = false;
             try
             {
@@ -71,7 +68,7 @@ namespace StremioCommunity
                 rootFrame = new Frame();
                 rootFrame.NavigationFailed += (sender, args) => throw new InvalidOperationException("Failed to load page " + args.SourcePageType.FullName);
 
-                // Use the whole screen; the TV-safe area is left to the web UI.
+                // Use the whole screen; the TV-safe area is left to the XAML pages.
                 ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 Window.Current.Content = rootFrame;
             }
@@ -80,7 +77,7 @@ namespace StremioCommunity
             {
                 if (rootFrame.Content == null)
                 {
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(StremioCommunity.Pages.HomePage), e.Arguments);
                 }
 
                 Window.Current.Activate();
@@ -92,7 +89,7 @@ namespace StremioCommunity
         {
             try
             {
-                if (Window.Current.Content is Frame rootFrame && rootFrame.Content is MainPage page)
+                if (Window.Current.Content is Frame rootFrame && rootFrame.Content is IAppLifecycle page)
                 {
                     page.OnAppForegroundChanged(enteringBackground);
                 }
@@ -100,6 +97,39 @@ namespace StremioCommunity
             catch (Exception ex)
             {
                 FileLog.Write("warn", "Foreground notification failed: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Pushes a live playback setting to the active page when it implements
+        /// <see cref="ISettingsApplier"/> (the PlayerPage). No-op otherwise.
+        /// Only the non-zero / non-null value(s) are applied.
+        /// </summary>
+        public void NotifyLiveSettings(int volume, double rate, bool applyMute, bool muted)
+        {
+            try
+            {
+                if (Window.Current.Content is Frame rootFrame && rootFrame.Content is ISettingsApplier page)
+                {
+                    if (volume > 0)
+                    {
+                        page.ApplyLiveVolume(volume);
+                    }
+
+                    if (rate > 0)
+                    {
+                        page.ApplyLiveRate(rate);
+                    }
+
+                    if (applyMute)
+                    {
+                        page.ApplyLiveMute(muted);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.Write("warn", "Live settings push failed: " + ex.Message);
             }
         }
     }

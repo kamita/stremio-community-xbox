@@ -1,0 +1,89 @@
+<Page
+    x:Class="StremioCommunity.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StremioCommunity.Pages"
+    Background="Black">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Search: A focuses the box (Xbox on-screen keyboard), B searches / closes it. -->
+        <TextBox
+            x:Name="SearchBox"
+            Grid.Row="0"
+            Margin="64,28,64,8"
+            Padding="12,8"
+            FontSize="22"
+            Foreground="White"
+            Background="#1AFFFFFF"
+            BorderBrush="#33FFFFFF"
+            BorderThickness="1"
+            Text="Search movies and series (A to type, B to search)"/>
+
+        <!-- Category tabs: loaded from /v1/catalog/{type}.json at startup. -->
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Disabled"
+            Padding="64,4,64,12">
+            <StackPanel x:Name="TabPanel" Orientation="Horizontal" />
+        </ScrollViewer>
+
+        <!-- Poster grid; the bottom-most tile is the "load more" tile while there are more pages. -->
+        <ScrollViewer
+            x:Name="GridScroll"
+            Grid.Row="2"
+            Margin="48,8,48,40"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled">
+            <!-- UWP has no WrapPanel/UniformGrid; this custom Panel lays children out 4-per-row. -->
+            <local:TileFlowPanel x:Name="TileWrap" />
+        </ScrollViewer>
+
+        <!-- Debug log (View button), kept from the original shell. -->
+        <Border
+            x:Name="DebugPanel"
+            Grid.Row="2"
+            Visibility="Collapsed"
+            Background="#E6000000"
+            BorderBrush="#7B5BF5"
+            BorderThickness="2"
+            CornerRadius="8"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Margin="48"
+            MaxWidth="1200"
+            Padding="16">
+            <StackPanel>
+                <TextBlock x:Name="DebugHeader" Foreground="#FFD54F" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,8" />
+                <TextBlock x:Name="DebugText" Foreground="White" FontFamily="Consolas" FontSize="13" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <!-- Settings panel (Y). D-pad moves, LB/RB adjust, A toggles/steps, B or Y closes. -->
+        <Border
+            x:Name="SettingsPanelGrid"
+            Grid.Row="2"
+            Visibility="Collapsed"
+            Background="#E6000000"
+            BorderBrush="#7B5BF5"
+            BorderThickness="2"
+            CornerRadius="8"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            MaxWidth="820"
+            MinWidth="520"
+            Padding="28,22">
+            <StackPanel>
+                <TextBlock FontSize="24" Foreground="#FFD54F" Margin="0,0,0,14" Text="Settings" />
+                <StackPanel x:Name="SettingsItems" />
+                <TextBlock FontSize="16" Foreground="#88FFFFFF" Margin="0,16,0,0" Text="D-pad: move   LB/RB: value   A: toggle   B: close" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
