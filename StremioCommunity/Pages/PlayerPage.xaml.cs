@@ -1352,6 +1352,23 @@ namespace StremioCommunity.Pages
                     Log("info", "Attach external subtitles: " + (_attachSubtitles ? "ON" : "OFF") + " (applies to the next playback)");
                     UpdateDebugHeader();
                 }
+                else if (button == PadButton.RightShoulder)
+                {
+                    // Cycle the download mode: 6 → 4 → 2 → 1 → direct URL (0) → 6 …
+                    // 0 = hand the URL straight to the player (fallback for streams the
+                    // buffered path can't handle). Applies to the next playback.
+                    switch (_connections)
+                    {
+                        case 6: _connections = 4; break;
+                        case 4: _connections = 2; break;
+                        case 2: _connections = 1; break;
+                        case 1: _connections = 0; break;
+                        default: _connections = 6; break;
+                    }
+                    SaveSetting("connections", _connections);
+                    Log("info", "Download mode: " + DescribeConnections() + " (applies to the next playback)");
+                    UpdateDebugHeader();
+                }
 
                 return;
             }
@@ -2446,7 +2463,12 @@ namespace StremioCommunity.Pages
         private void UpdateDebugHeader()
         {
             DebugHeader.Text = "Debug log  |  Y: restart seek " + DescribeRestartSeek() + "  |  X: subtitles " +
-                (_attachSubtitles ? "ON" : "OFF") + "  |  B: close";
+                (_attachSubtitles ? "ON" : "OFF") + "  |  RB: " + DescribeConnections() + "  |  B: close";
+        }
+
+        private string DescribeConnections()
+        {
+            return _connections == 0 ? "direct URL" : _connections + " connection" + (_connections == 1 ? string.Empty : "s");
         }
 
         private void LogAsync(string level, string text)
