@@ -83,7 +83,17 @@ namespace StremioCommunity.Pages
         private int _audioMenuIndex; // Highlighted row in the audio track menu.
         private int _subtitleMenuIndex; // Highlighted row in the subtitle menu (0 = "off").
         private int _subtitleTrackCount; // Number of subtitle track rows (before the Delay/Speed value rows).
-        private int _lastSubtitleSelection; // 0 = off, n = the n-th subtitle track; restored when the menu reopens.
+        private int _lastSubtitleSelection; // 0 = off, n = the n-th subtitle track; menu highlight.
+        private bool _subtitleUserChose; // true only when the USER picked a subtitle in the menu (not auto-select).
+
+        // Preferred audio/subtitle auto-select with retry: the track set (external subtitles especially)
+        // resolves ASYNCHRONOUSLY and arrives in batches (1, 2, 4 … N), so a single pass on the first
+        // TimedMetadataTracksChanged event often sees no matching track yet. We re-apply on every change
+        // until a match is found, the user picks a track, or a settle deadline passes (then give up).
+        private MediaPlaybackItem _prefItem;
+        private bool _prefDone;
+        private System.Threading.Timer _prefSettleTimer;
+        private const int PrefSettleSeconds = 6;
         private string _osdMessage;
 
         private PadButton _lastPadBtn;
@@ -126,6 +136,7 @@ namespace StremioCommunity.Pages
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
             SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
             _gamepad.Stop();
+            CancelPrefSettleTimer();
             base.OnNavigatedFrom(e);
         }
 
@@ -294,6 +305,10 @@ namespace StremioCommunity.Pages
                 });
 
                 _lastSubtitleSelection = 0;
+                _subtitleUserChose = false;
+                _prefItem = null;
+                _prefDone = false;
+                CancelPrefSettleTimer();
                 player.Source = item;
             }
             catch (Exception ex)
@@ -436,58 +451,70 @@ namespace StremioCommunity.Pages
             return string.Compare(labelA, labelB, StringComparison.OrdinalIgnoreCase);
         }
 
-        // Tracks report their language in ISO 639-2/T codes ("spa", "eng", "ita", ...);
-        // the user's preference is stored as ISO 639-1 ("es", "en", ...). This returns every
-        // code variant (639-1 + 639-2/T + legacy) that should match a preference.
-        private static string[] LanguageVariants(string code)
+        // ---- Language code normalization -------------------------------------------------------
+        // The account preference, track labels, and TimedMetadataTrack.Language can all be
+        // 2-letter ISO 639-1 ("es", "en"), 3-letter ISO 639-2/T ("spa", "eng"), or
+        // language names ("Spanish"). This normalizes any of them to a 2-letter base code
+        // so comparisons are consistent regardless of the source.
+        private static string NormalizeLangCode(string code)
         {
-            switch (code.ToLowerInvariant())
+            if (string.IsNullOrEmpty(code))
             {
-                case "es": return new[] { "es", "spa" };
-                case "en": return new[] { "en", "eng" };
-                case "fr": return new[] { "fr", "fra", "fre" };
-                case "pt": return new[] { "pt", "por" };
-                case "de": return new[] { "de", "deu", "ger" };
-                case "it": return new[] { "it", "ita" };
-                case "ja": return new[] { "ja", "jpn" };
-                case "ko": return new[] { "ko", "kor" };
-                case "zh": return new[] { "zh", "zho", "chi" };
-                case "ru": return new[] { "ru", "rus" };
-                case "ar": return new[] { "ar", "ara" };
-                default:   return new[] { code };
+                return string.Empty;
+            }
+            var c = code.ToLowerInvariant().Trim();
+            switch (c)
+            {
+                // ISO 639-2/T (3-letter)
+                case "spa": case "esp": return "es";
+                case "eng": return "en";
+                case "fra": case "fre": return "fr";
+                case "por": return "pt";
+                case "deu": case "ger": return "de";
+                case "ita": return "it";
+                case "jpn": case "jap": return "ja";
+                case "kor": return "ko";
+                case "zho": case "chi": return "zh";
+                case "rus": return "ru";
+                case "ara": return "ar";
+                case "nld": case "dut": return "nl";
+                case "pol": return "pl";
+                case "hrv": return "hr";
+                case "slv": return "sl";
+                case "tur": return "tr";
+                // Language names (in any of a handful of common languages)
+                case "spanish": case "castellano": case "castilian": return "es";
+                case "english": return "en";
+                case "french": return "fr";
+                case "portuguese": return "pt";
+                case "german": return "de";
+                case "italian": return "it";
+                case "japanese": return "ja";
+                case "korean": return "ko";
+                case "chinese": case "mandarin": return "zh";
+                case "russian": return "ru";
+                case "arabic": return "ar";
+                case "dutch": case "flemish": return "nl";
+                case "polish": return "pl";
+                case "croatian": return "hr";
+                case "slovenian": return "sl";
+                case "turkish": return "tr";
+                default:
+                    // If it's already a valid 2-letter code, return as-is.
+                    return c.Length == 2 && char.IsLetter(c[0]) && char.IsLetter(c[1]) ? c : string.Empty;
             }
         }
 
         // True when a track's language corresponds to the user's preferred language code.
         private static bool LanguageMatches(string trackLang, string code)
         {
-            if (string.IsNullOrEmpty(trackLang) || string.IsNullOrEmpty(code))
+            var a = NormalizeLangCode(trackLang);
+            var b = NormalizeLangCode(code);
+            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
             {
                 return false;
             }
-            var baseCode = trackLang.Split('-')[0].ToLowerInvariant();
-            foreach (var variant in LanguageVariants(code))
-            {
-                if (baseCode == variant)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private static string LanguageLabelKeyword(string label)
-        {
-            switch (label)
-            {
-                case "Español":   return "spani";
-                case "English":   return "english";
-                case "Français":  return "french";
-                case "Português": return "portug";
-                case "Deutsch":   return "german";
-                case "Italiano":  return "italian";
-                default:          return null;
-            }
+            return a == b;
         }
 
         // Applies the audio track matching the user's preferred language, BEFORE Play()
@@ -542,6 +569,10 @@ namespace StremioCommunity.Pages
                     Log("info", "Audio: auto-selected track " + (chosen + 1) +
                         " (" + (tracks[chosen].Language ?? "?") + ") for language \"" + effectiveCode + "\"");
                 }
+                else if (chosen < 0)
+                {
+                    Log("info", "Audio: no track matched language \"" + effectiveCode + "\" (" + tracks.Count + " tracks) — using the player default");
+                }
             }
             catch (Exception ex)
             {
@@ -566,14 +597,24 @@ namespace StremioCommunity.Pages
 
         private static string LanguageLabelKeywordForCode(string code)
         {
-            if (string.IsNullOrEmpty(code))
+            var normalized = NormalizeLangCode(code);
+            if (string.IsNullOrEmpty(normalized))
             {
                 return null;
             }
-            var idx = Array.IndexOf(CommunitySettings.LanguageCodes, code.ToLowerInvariant());
+            var idx = Array.IndexOf(CommunitySettings.LanguageCodes, normalized);
             if (idx > 0)
             {
-                return LanguageLabelKeyword(CommunitySettings.LanguageLabels[idx]);
+                switch (normalized)
+                {
+                    case "es": return "spani";
+                    case "en": return "english";
+                    case "fr": return "french";
+                    case "pt": return "portug";
+                    case "de": return "german";
+                    case "it": return "italian";
+                    default:   return null;
+                }
             }
             return null;
         }
@@ -630,17 +671,29 @@ namespace StremioCommunity.Pages
                         }
                     }
                 }
-                // Third pass: addon labels are "<lang> (addon-name)"; match the 2-letter code.
+                // Third pass: addon labels are "<lang> (addon-name)" or "<name>" — extract the
+                // leading token and normalize it, so "eng (OpenSubtitles)", "English", "eng",
+                // "spa", "Spanish" all match preference "en"/"eng"/"spa" correctly.
                 if (chosenTrack < 0)
                 {
-                    foreach (var ti in subtitleIndices)
+                    var target = NormalizeLangCode(effectiveCode);
+                    if (!string.IsNullOrEmpty(target))
                     {
-                        var label = (tracks[ti].Label ?? string.Empty).Trim();
-                        if (label.Length >= 2 &&
-                            label.Substring(0, 2).Equals(effectiveCode, StringComparison.OrdinalIgnoreCase))
+                        foreach (var ti in subtitleIndices)
                         {
-                            chosenTrack = ti;
-                            break;
+                            var label = (tracks[ti].Label ?? tracks[ti].Language ?? string.Empty).Trim();
+                            // Take the first whitespace-separated token ("eng" from "eng (OpenSubtitles v3)").
+                            var token = label;
+                            var sp = label.IndexOf(' ');
+                            if (sp > 0)
+                            {
+                                token = label.Substring(0, sp);
+                            }
+                            if (NormalizeLangCode(token) == target)
+                            {
+                                chosenTrack = ti;
+                                break;
+                            }
                         }
                     }
                 }
@@ -662,7 +715,7 @@ namespace StremioCommunity.Pages
                         "\" for language \"" + effectiveCode + "\"");
                     return true;
                 }
-                Log("warn", "Subtitles: no track matched language \"" + effectiveCode + "\" — leaving as the player defaults");
+                Log("info", "Subtitles: no track yet matched language \"" + effectiveCode + "\" — will retry on the next track update");
                 return false;
             }
             catch (Exception ex)
@@ -1704,13 +1757,10 @@ namespace StremioCommunity.Pages
             }
         }
 
-        // Guards for OnSubtitleTracksAvailable: the per-playback flag prevents the
-        // auto-select block from re-firing on subsequent TimedMetadataTracksChanged events.
-        private MediaPlaybackItem _subtitlePrefItem;
-        private bool _subtitlePrefApplied;
-
-        // External subtitle tracks resolve ASYNCHRONOUSLY — TimedMetadataTracksChanged is
-        // the reliable signal that the full track set is available.
+        // TimedMetadataTracksChanged is the reliable signal that subtitle tracks are (partially)
+        // available. External subtitle tracks resolve ASYNCHRONOUSLY and arrive in batches, so this
+        // handler re-runs the auto-select on every batch until it can match the user's preferred
+        // language, the user picks a track, or the settle deadline passes (see StartPrefSettleTimer).
         private void OnSubtitleTracksAvailable(MediaPlaybackItem item)
         {
             if (item == null)
@@ -1718,43 +1768,78 @@ namespace StremioCommunity.Pages
                 return;
             }
 
-            var isNew = item != _subtitlePrefItem;
-            if (isNew)
+            // A new item (fresh playback, or a subtitle re-time swap): restart the retry window.
+            if (item != _prefItem)
             {
-                _subtitlePrefItem = item;
-                _subtitlePrefApplied = false;
+                _prefItem = item;
+                _prefDone = false;
+                StartPrefSettleTimer();
             }
 
-            if (_subtitlePrefApplied)
+            if (_prefDone)
             {
                 return;
             }
 
-            var userChose = _lastSubtitleSelection > 0;
-            if (!userChose)
+            // If the user picked a subtitle manually, honor it (restore on this item) and stop auto-select.
+            if (_subtitleUserChose)
             {
-                // Pass the item DIRECTLY (from the event) — not from MediaPlayer.Source.
-                var selected = ApplyPreferredLanguageTracks(item);
-                if (selected)
-                {
-                    _subtitlePrefApplied = true;
-                }
-            }
-            else
-            {
-                // Restore the user's manual selection on this new item (re-time swap).
                 var indices = GetOrderedSubtitleTrackIndices(item);
                 if (indices.Count >= _lastSubtitleSelection)
                 {
                     TryRestoreManualSubtitleSelection(item, _lastSubtitleSelection);
-                    _subtitlePrefApplied = true;
+                    EndPrefRetry();
                 }
-                else
-                {
-                    Log("info", "Subtitle selection pending: have " + indices.Count +
-                        " tracks, need " + _lastSubtitleSelection + " — waiting for more");
-                }
+                // else: still waiting for enough tracks to restore the user's pick; keep retrying.
+                return;
             }
+
+            // Apply the preferred subtitle track; also (re)apply the preferred audio track now that
+            // the full track set is present (audio is applied earlier in OnMediaOpened, but the set
+            // can still be growing for some sources).
+            var subtitleOk = ApplyPreferredLanguageTracks(item);
+            if (_mediaPlayer != null)
+            {
+                ApplyPreferredAudioTrack(_mediaPlayer);
+            }
+
+            if (subtitleOk)
+            {
+                EndPrefRetry();
+            }
+            // else: no match yet — keep retrying on subsequent track-change events until the deadline.
+        }
+
+        // Starts (or restarts) the deadline timer that bounds the auto-select retry window.
+        private void StartPrefSettleTimer()
+        {
+            CancelPrefSettleTimer();
+            _prefSettleTimer = new System.Threading.Timer(_ =>
+            {
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    if (!_prefDone)
+                    {
+                        _prefDone = true;
+                        Log("info", "Preferred-track auto-select: set settled with no exact match for the preferred language — using the player default");
+                    }
+                });
+            }, null, PrefSettleSeconds * 1000, System.Threading.Timeout.Infinite);
+        }
+
+        private void CancelPrefSettleTimer()
+        {
+            if (_prefSettleTimer != null)
+            {
+                _prefSettleTimer.Dispose();
+                _prefSettleTimer = null;
+            }
+        }
+
+        private void EndPrefRetry()
+        {
+            _prefDone = true;
+            CancelPrefSettleTimer();
         }
 
         private void TryRestoreManualSubtitleSelection(MediaPlaybackItem item, int row)
@@ -1966,6 +2051,8 @@ namespace StremioCommunity.Pages
             var label = (SubtitleMenuItems.Children[chosen] as TextBlock)?.Text ?? string.Empty;
             CloseSubtitleMenu();
             _lastSubtitleSelection = chosen;
+            _subtitleUserChose = true; // the user's explicit pick — don't overwrite with the auto-select
+            EndPrefRetry();
 
             if (!(_mediaPlayer?.Source is MediaPlaybackItem item))
             {
