@@ -1,0 +1,1010 @@
+10:43:02.549 INFO App starting
+10:43:02.577 INFO Layout scaling disabled: True
+10:43:02.582 INFO System cursor: off
+10:43:03.527 INFO Stremio-Community 1.0.0
+10:43:03.548 INFO Display: 16 modes, HDR10 yes, Dolby Vision LL yes, current 3840x2160@119.88
+10:43:03.596 INFO Lifecycle: leaving background
+10:43:03.909 INFO Request logging: all source kinds (page and workers)
+10:43:04.332 INFO Request Script GET www.gstatic.com/cv/js/sender/v1/cast_sender.js?<query>
+10:43:04.333 INFO Request Script GET appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js
+10:43:04.366 INFO Response 200  in 31 ms: www.gstatic.com/cv/js/sender/v1/cast_sender.js?<query>
+10:43:04.367 INFO Response 200 OK in 31 ms: appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js
+10:43:05.503 INFO web: User agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0
+10:43:05.503 INFO Request Script GET www.gstatic.com/cast/sdk/libs/sender/1.0/cast_framework.js
+10:43:05.503 INFO web: WebView2 bridge hidden from Stremio Web: true
+10:43:05.504 INFO Request Script GET www.gstatic.com/eureka/clank/150/cast_sender.js
+10:43:05.524 INFO Response 200  in 32 ms: www.gstatic.com/cast/sdk/libs/sender/1.0/cast_framework.js
+10:43:05.524 INFO Response 200  in 16 ms: www.gstatic.com/eureka/clank/150/cast_sender.js
+10:43:05.530 INFO Loaded https://web.stremio.com/
+10:43:05.538 INFO web: Native player enabled
+10:43:05.538 INFO Page zoom 100% (window 1920x1080)
+10:43:05.539 INFO web: Cursor mode on (gamepad keys blocked)
+10:43:05.540 INFO Cursor calibrated: 1920x1080 DIP -> 1920x1080 CSS px (scale 1.000)
+10:43:05.540 INFO Cursor calibrated: 1920x1080 DIP -> 1920x1080 CSS px (scale 1.000)
+10:43:05.747 INFO Typing focus pass (page loaded): native box ok, WebView2 ok
+10:43:07.928 INFO Request XmlHttpRequest GET 127.0.0.1/settings
+10:43:07.929 INFO Request XmlHttpRequest GET 127.0.0.1/casting
+10:43:07.929 INFO Request XmlHttpRequest GET 127.0.0.1/network-info
+10:43:07.929 INFO Request XmlHttpRequest GET 127.0.0.1/device-info
+10:43:07.967 INFO Request XmlHttpRequest POST api.strem.io/api/getGeo
+10:43:07.967 INFO Request XmlHttpRequest GET api.strem.io/config
+10:43:08.010 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/feed.json
+10:43:08.031 INFO Request XmlHttpRequest POST api.strem.io/api/getModal
+10:43:08.052 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/catalog/movie/top.json
+10:43:08.053 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/catalog/series/top.json
+10:43:08.055 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/catalog/movie/imdbRating.json
+10:43:08.055 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/catalog/series/imdbRating.json
+10:43:08.055 INFO Request XmlHttpRequest GET v3-channels.strem.io/catalog/channel/top.json
+10:43:08.055 INFO Request XmlHttpRequest GET caching.stremio.net/publicdomainmovies.now.sh/catalog/movie/publicdomainmovies.json
+10:43:08.092 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/feed.json
+10:43:08.359 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/top/catalog/movie/top.json
+10:43:08.360 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/top/catalog/series/top.json
+10:43:08.363 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/imdbRating/catalog/movie/imdbRating.json
+10:43:08.363 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/imdbRating/catalog/series/imdbRating.json
+10:43:23.991 WARN No response after 16 s: GET 127.0.0.1/settings
+10:43:23.991 WARN No response after 16 s: GET 127.0.0.1/casting
+10:43:23.991 WARN No response after 16 s: GET 127.0.0.1/network-info
+10:43:23.991 WARN No response after 16 s: GET 127.0.0.1/device-info
+10:43:23.992 WARN No response after 16 s: POST api.strem.io/api/getGeo
+10:43:23.992 WARN No response after 16 s: GET api.strem.io/config
+10:43:23.992 WARN No response after 15 s: GET cinemeta-catalogs.strem.io/feed.json
+10:43:23.992 WARN No response after 15 s: POST api.strem.io/api/getModal
+10:43:23.992 WARN No response after 15 s: GET v3-cinemeta.strem.io/catalog/movie/top.json
+10:43:23.992 WARN No response after 15 s: GET v3-cinemeta.strem.io/catalog/series/top.json
+10:43:23.992 WARN No response after 15 s: GET v3-cinemeta.strem.io/catalog/movie/imdbRating.json
+10:43:23.992 WARN No response after 15 s: GET v3-cinemeta.strem.io/catalog/series/imdbRating.json
+10:43:23.992 WARN No response after 15 s: GET v3-channels.strem.io/catalog/channel/top.json
+10:43:23.992 WARN No response after 15 s: GET caching.stremio.net/publicdomainmovies.now.sh/catalog/movie/publicdomainmovies.json
+10:43:23.992 WARN No response after 15 s: GET cinemeta-catalogs.strem.io/top/catalog/movie/top.json
+10:43:23.992 WARN No response after 15 s: GET cinemeta-catalogs.strem.io/top/catalog/series/top.json
+10:43:23.992 WARN No response after 15 s: GET cinemeta-catalogs.strem.io/imdbRating/catalog/movie/imdbRating.json
+10:43:23.992 WARN No response after 15 s: GET cinemeta-catalogs.strem.io/imdbRating/catalog/series/imdbRating.json
+10:44:01.678 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:01.891 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:44:02.193 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:02.355 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:03.108 WARN web: INPUT keydown | key=Unidentified code= trusted=true target=BODY
+10:44:03.109 INFO web: Key from WebView2: key=Unidentified code= keyCode=37
+10:44:03.191 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:03.228 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:03.275 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:04.030 WARN web: INPUT keydown | key=Unidentified code= trusted=true target=BODY
+10:44:04.112 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:04.307 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:05.259 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:44:05.263 WARN web: INPUT pointerdown | target=DIV.label-container-XOyzm nav-menu
+10:44:05.263 WARN web: INPUT mousedown | target=DIV.label-container-XOyzm nav-menu
+10:44:05.264 WARN web: INPUT pointerup | target=DIV.label-container-XOyzm nav-menu
+10:44:05.265 WARN web: INPUT mouseup | target=DIV.label-container-XOyzm nav-menu
+10:44:05.265 WARN web: INPUT click | target=DIV.label-container-XOyzm nav-menu
+10:44:05.282 INFO SRC xinput btn=A pads=1
+10:44:05.340 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:05.571 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:07.779 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:44:07.781 WARN web: INPUT pointerdown | target=DIV.label-lAveW
+10:44:07.781 WARN web: INPUT mousedown | target=DIV.label-lAveW
+10:44:07.782 WARN web: INPUT pointerup | target=DIV.label-lAveW
+10:44:07.782 WARN web: INPUT mouseup | target=DIV.label-lAveW
+10:44:07.782 WARN web: INPUT click | target=DIV.label-lAveW
+10:44:07.783 INFO SRC xinput btn=A pads=1
+10:44:07.839 WARN web: INPUT focus | target=INPUT.credentials-text-input-QMCZz t
+10:44:07.840 WARN web: INPUT focusin | target=INPUT.credentials-text-input-QMCZz t
+10:44:07.948 INFO On-screen keyboard shown (InputPane)
+10:44:08.014 INFO On-screen keyboard hidden (InputPane)
+10:44:08.059 INFO Typing focus pass (field focused by page): native box ok, WebView2 ok
+10:44:08.467 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:08.876 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:09.403 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:44:09.404 WARN web: INPUT pointerdown | target=DIV.form-button-vyqqj login-form-b
+10:44:09.405 WARN web: INPUT mousedown | target=DIV.form-button-vyqqj login-form-b
+10:44:09.405 WARN web: INPUT pointerup | target=DIV.form-button-vyqqj login-form-b
+10:44:09.406 WARN web: INPUT mouseup | target=DIV.form-button-vyqqj login-form-b
+10:44:09.406 WARN web: INPUT click | target=DIV.form-button-vyqqj login-form-b
+10:44:09.430 WARN web: INPUT focus | target=INPUT.credentials-text-input-QMCZz t
+10:44:09.431 WARN web: INPUT focusin | target=INPUT.credentials-text-input-QMCZz t
+10:44:09.435 INFO SRC xinput btn=A pads=1
+10:44:09.476 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:09.515 INFO On-screen keyboard shown (InputPane)
+10:44:10.706 INFO ACCEL key vk=0x45 sc=18 ext=False
+10:44:10.707 WARN web: INPUT keydown | key=e code=KeyE trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:10.708 INFO web: Key from WebView2: key=e code=KeyE keyCode=69
+10:44:10.709 WARN web: INPUT keyup | key=e code=KeyE trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:10.941 INFO ACCEL key vk=0x44 sc=32 ext=False
+10:44:12.188 INFO ACCEL key vk=0x4F sc=24 ext=False
+10:44:12.190 WARN web: INPUT keydown | key=o code=KeyO trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:12.190 WARN web: INPUT keyup | key=o code=KeyO trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:12.660 INFO ACCEL key vk=0xBE sc=52 ext=False
+10:44:13.436 INFO ACCEL key vk=0x42 sc=48 ext=False
+10:44:13.437 WARN web: INPUT keydown | key=b code=KeyB trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:13.438 INFO web: Key from WebView2: key=b code=KeyB keyCode=66
+10:44:13.440 WARN web: INPUT keyup | key=b code=KeyB trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:14.741 INFO ACCEL key vk=0x45 sc=18 ext=False
+10:44:14.742 WARN web: INPUT keydown | key=e code=KeyE trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:14.742 WARN web: INPUT keyup | key=e code=KeyE trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:15.693 INFO ACCEL key vk=0x4E sc=49 ext=False
+10:44:15.694 WARN web: INPUT keydown | key=n code=KeyN trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:15.694 INFO web: Key from WebView2: key=n code=KeyN keyCode=78
+10:44:15.694 WARN web: INPUT keyup | key=n code=KeyN trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:16.396 INFO ACCEL key vk=0x49 sc=23 ext=False
+10:44:16.397 WARN web: INPUT keydown | key=i code=KeyI trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:16.398 WARN web: INPUT keyup | key=i code=KeyI trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:17.276 INFO ACCEL key vk=0x54 sc=20 ext=False
+10:44:17.277 WARN web: INPUT keydown | key=t code=KeyT trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:17.278 WARN web: INPUT keyup | key=t code=KeyT trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:17.676 INFO ACCEL key vk=0x45 sc=18 ext=False
+10:44:18.508 INFO ACCEL key vk=0x5A sc=44 ext=False
+10:44:18.509 WARN web: INPUT keydown | key=z code=KeyZ trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:18.510 INFO web: Key from WebView2: key=z code=KeyZ keyCode=90
+10:44:18.510 WARN web: INPUT keyup | key=z code=KeyZ trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:19.211 INFO ACCEL key vk=0x11 sc=29 ext=False
+10:44:19.212 INFO ACCEL key vk=0x12 sc=56 ext=False
+10:44:19.212 INFO ACCEL key vk=0x51 sc=16 ext=False
+10:44:19.213 WARN web: INPUT keydown | key=Control code=ControlLeft trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:19.214 WARN web: INPUT keyup | key=@ code=KeyQ trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:20.556 INFO ACCEL key vk=0x47 sc=34 ext=False
+10:44:20.557 WARN web: INPUT keydown | key=g code=KeyG trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:20.558 INFO web: Key from WebView2: key=g code=KeyG keyCode=71
+10:44:20.558 WARN web: INPUT keyup | key=g code=KeyG trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:21.172 INFO ACCEL key vk=0x4D sc=50 ext=False
+10:44:21.173 WARN web: INPUT keydown | key=m code=KeyM trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:21.174 WARN web: INPUT keyup | key=m code=KeyM trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:22.252 INFO ACCEL key vk=0x41 sc=30 ext=False
+10:44:22.253 WARN web: INPUT keydown | key=a code=KeyA trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:22.254 WARN web: INPUT keyup | key=a code=KeyA trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:23.524 INFO ACCEL key vk=0x49 sc=23 ext=False
+10:44:23.526 WARN web: INPUT keydown | key=i code=KeyI trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:23.526 INFO web: Key from WebView2: key=i code=KeyI keyCode=73
+10:44:23.528 WARN web: INPUT keyup | key=i code=KeyI trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:24.012 INFO ACCEL key vk=0x4C sc=38 ext=False
+10:44:25.124 INFO ACCEL key vk=0xFF sc=0 ext=False
+10:44:25.125 WARN web: INPUT keydown | key=Unidentified code= trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:25.128 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:26.124 INFO ACCEL key vk=0x0D sc=28 ext=False
+10:44:26.125 WARN web: INPUT keydown | key=Enter code=Enter trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:26.126 INFO web: Key from WebView2: key=Enter code=Enter keyCode=13
+10:44:26.126 WARN web: INPUT focus | target=INPUT.credentials-text-input-QMCZz t
+10:44:26.127 WARN web: INPUT focusin | target=INPUT.credentials-text-input-QMCZz t
+10:44:26.127 WARN web: INPUT keyup | key=Enter code=Enter trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:27.939 INFO ACCEL key vk=0x10 sc=42 ext=False
+10:44:27.940 WARN web: INPUT keydown | key=Shift code=ShiftLeft trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:27.941 WARN web: INPUT keyup | key=Shift code=ShiftLeft trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:28.364 INFO web: Key from WebView2: key=Shift code=ShiftLeft keyCode=16
+10:44:28.365 INFO ACCEL key vk=0x50 sc=25 ext=False
+10:44:29.460 INFO ACCEL key vk=0x45 sc=18 ext=False
+10:44:29.461 WARN web: INPUT keydown | key=e code=KeyE trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:29.462 WARN web: INPUT keyup | key=e code=KeyE trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:29.772 INFO ACCEL key vk=0x52 sc=19 ext=False
+10:44:30.516 INFO ACCEL key vk=0x41 sc=30 ext=False
+10:44:30.517 WARN web: INPUT keydown | key=a code=KeyA trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:30.517 INFO web: Key from WebView2: key=a code=KeyA keyCode=65
+10:44:30.518 WARN web: INPUT keyup | key=a code=KeyA trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:31.132 INFO ACCEL key vk=0x32 sc=3 ext=False
+10:44:31.133 WARN web: INPUT keydown | key=2 code=Digit2 trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:31.136 WARN web: INPUT keyup | key=2 code=Digit2 trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:32.491 INFO ACCEL key vk=0x10 sc=42 ext=False
+10:44:32.493 WARN web: INPUT keydown | key=Shift code=ShiftLeft trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:32.493 WARN web: INPUT keyup | key=Shift code=ShiftLeft trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:32.820 INFO ACCEL key vk=0x43 sc=46 ext=False
+10:44:32.821 INFO web: Key from WebView2: key=Shift code=ShiftLeft keyCode=16
+10:44:33.236 INFO ACCEL key vk=0x44 sc=32 ext=False
+10:44:33.237 WARN web: INPUT keydown | key=d code=KeyD trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:33.237 WARN web: INPUT keyup | key=d code=KeyD trusted=true target=INPUT.credentials-text-input-QMCZz t
+10:44:33.660 INFO ACCEL key vk=0x0D sc=28 ext=False
+10:44:33.667 INFO Request XmlHttpRequest POST api.strem.io/api/login
+10:44:33.667 INFO On-screen keyboard hidden (InputPane)
+10:44:34.043 INFO Request XmlHttpRequest POST api.strem.io/api/addonCollectionGet
+10:44:34.043 INFO Request XmlHttpRequest POST api.strem.io/api/datastoreGet
+10:44:34.630 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/catalog/series/last-videos/<366 chars>
+10:44:34.683 INFO Request XmlHttpRequest GET 127.0.0.1/local-addon/catalog/other/local.json
+10:44:34.689 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/nfx.json
+10:44:34.690 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/nfx.json
+10:44:34.691 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/hbm.json
+10:44:34.691 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/hbm.json
+10:44:34.692 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/dnp.json
+10:44:34.733 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/dnp.json
+10:44:35.927 INFO ACCEL key vk=0xD4 sc=0 ext=False
+10:44:36.011 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:36.036 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:36.619 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:36.713 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/amp.json
+10:44:37.123 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:44:37.125 WARN web: INPUT pointerdown | target=DIV.label-PkwRv
+10:44:37.125 WARN web: INPUT mousedown | target=DIV.label-PkwRv
+10:44:37.126 WARN web: INPUT pointerup | target=DIV.label-PkwRv
+10:44:37.127 WARN web: INPUT mouseup | target=DIV.label-PkwRv
+10:44:37.127 WARN web: INPUT click | target=DIV.label-PkwRv
+10:44:37.146 INFO SRC xinput btn=A pads=1
+10:44:37.198 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:37.331 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:37.851 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:44:37.908 INFO Request XmlHttpRequest POST api.strem.io/api/events
+10:44:38.083 WARN web: INPUT keydown | key=Unidentified code= trusted=true target=BODY
+10:44:38.083 INFO web: Key from WebView2: key=Unidentified code= keyCode=37
+10:44:38.166 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:38.332 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:41.035 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:41.079 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:43.659 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:43.987 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:44.315 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:44:44.635 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:44:44.638 WARN web: INPUT pointerdown | target=IMG.poster-image-NiV7O
+10:44:44.638 WARN web: INPUT mousedown | target=IMG.poster-image-NiV7O
+10:44:44.641 WARN web: INPUT pointerup | target=IMG.poster-image-NiV7O
+10:44:44.642 WARN web: INPUT mouseup | target=IMG.poster-image-NiV7O
+10:44:44.642 WARN web: INPUT click | target=IMG.poster-image-NiV7O
+10:44:44.654 INFO SRC xinput btn=A pads=1
+10:44:44.704 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:44.728 INFO Request XmlHttpRequest OPTIONS likes.stremio.com/api/get_status?<query>
+10:44:44.734 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/meta/series/tt1266020.json
+10:44:44.734 INFO Request XmlHttpRequest GET 127.0.0.1/local-addon/stream/series/tt1266020%3A6%3A3.json
+10:44:44.735 INFO Request XmlHttpRequest GET torrentio.strem.fun/<91 chars>/stream/series/tt1266020%3A6%3A3.json
+10:44:44.735 INFO Request XmlHttpRequest POST api.strem.io/api/datastoreGet
+10:44:45.251 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:45.716 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:47.267 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:44:47.499 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:48.043 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:44:48.044 WARN web: INPUT pointerdown | target=DIV.description-sgfNX
+10:44:48.044 WARN web: INPUT mousedown | target=DIV.description-sgfNX
+10:44:48.046 WARN web: INPUT pointerup | target=DIV.description-sgfNX
+10:44:48.047 WARN web: INPUT mouseup | target=DIV.description-sgfNX
+10:44:48.047 WARN web: INPUT click | target=DIV.description-sgfNX
+10:44:48.057 INFO SRC xinput btn=A pads=1
+10:44:48.103 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:44:48.110 INFO web: Stream: {"url":"https://torrentio.strem.fun/resolve/torbox/b324955c-19fc-4a25-9c1e-9b937208af19/301000d5b12edb0b8a16b4c18353a77b6a2ca25b/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4/2/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4","name":"[TB+] Torrentio\n1080p","description":"Parks.and.Recreation.S06.1080p.BluRay.x265-KONTRAST\nParks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4\n👤 346 💾 425.69 MB ⚙️ TorrentGalaxy","behaviorHints":{"bingeGroup":"torrentio|301000d5b12edb0b8a16b4c18353a77b6a2ca25b","filename":"Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4"}}
+10:44:48.114 INFO Request XmlHttpRequest GET opensubtitles-v3.strem.io/subtitles/series/tt1266020%3A6%3A3.json
+10:44:48.117 INFO Request XmlHttpRequest GET opensubtitlesv3-pro.dexter21767.com/<124 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:44:48.118 INFO Request XmlHttpRequest GET hispasubs.ak-forge.workers.dev/<206 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:44:48.176 INFO Response 200 OK in 63 ms: opensubtitles-v3.strem.io/subtitles/series/tt1266020%3A6%3A3.json
+10:44:48.315 INFO Response 200  in 203 ms: hispasubs.ak-forge.workers.dev/<206 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:44:48.910 INFO Request XmlHttpRequest GET opensubtitles.stremio.homes/es%7Cea/<52 chars>/subtitles/series/tt1266020:6:3.json
+10:44:49.221 INFO Response 302  in 1110 ms: opensubtitlesv3-pro.dexter21767.com/<124 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:44:49.375 WARN No response after 15 s: POST api.strem.io/api/addonCollectionGet
+10:44:49.375 WARN No response after 15 s: POST api.strem.io/api/login
+10:44:51.112 INFO Response 200 OK in 2203 ms: opensubtitles.stremio.homes/es%7Cea/<52 chars>/subtitles/series/tt1266020:6:3.json
+10:44:51.112 INFO web: Subtitles found: 58 from 3 addon(s), preferred eng; passing 20
+10:44:51.117 INFO Native play: [TB+] Torrentio 1080p | Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4
+10:44:51.118 INFO Stream URL: https://torrentio.strem.fun/resolve/torbox/b324955c-19fc-4a25-9c1e-9b937208af19/301000d5b12edb0b8a16b4c18353a77b6a2ca25b/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4/2/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4
+10:44:51.151 INFO Initial volume: 50%
+10:44:51.152 INFO Playback rate: 1x, muted: False
+10:44:51.499 INFO Probe 0: torrentio.strem.fun 302 in 328 ms
+10:44:52.148 INFO Probe 1: api.torbox.app 307 in 649 ms
+10:44:52.707 INFO Buffered playback: 6 connections, 768 MB read-ahead, video/mp4
+10:44:52.715 INFO External subtitles: 20
+10:44:52.720 INFO Probe 2: nexus-082.latm.tb-cdn.cx 206 in 453 ms
+10:44:52.720 INFO Probe result: final host nexus-082.latm.tb-cdn.cx, size 446372657 bytes, type 'video/mp4', ranges yes, server 'Nexus/1.0'
+10:44:52.720 INFO Stream view 1 created by page at 0 MB
+10:44:52.720 INFO Stream view 2 created by CloneStream at 0 MB (from view 1)
+10:44:52.732 INFO Read 1: view 2, position 0 (chunk 0), 16 bytes
+10:44:53.441 INFO Chunk 1: 4 MB in 727 ms (46 Mbps), attempt 1
+10:44:53.491 INFO Chunk 3: 4 MB in 777 ms (43 Mbps), attempt 1
+10:44:53.491 INFO Chunk 2: 4 MB in 778 ms (43 Mbps), attempt 1
+10:44:53.494 INFO Chunk 0: 4 MB in 782 ms (43 Mbps), attempt 1
+10:44:53.494 WARN Read waited 758 ms: view 2, position 0 (chunk 0, was downloading), playhead chunk 0, buffered ahead 16 MB
+10:44:53.520 INFO Read 2: view 2, position 0 (chunk 0), 1024 bytes
+10:44:53.521 INFO Read 3: view 2, position 0 (chunk 0), 262144 bytes
+10:44:53.521 INFO Read 4: view 2, position 262144 (chunk 0), 262144 bytes
+10:44:53.521 INFO Read 5: view 2, position 524288 (chunk 0), 262144 bytes
+10:44:53.522 INFO Read 6: view 2, position 786432 (chunk 0), 262144 bytes
+10:44:53.747 INFO Subtitle tracks: 1 - hrv (OpenSubtitles v3)
+10:44:53.753 WARN Subtitles: no track matched language "eng" — leaving as the player defaults
+10:44:53.757 INFO Subtitle tracks: 2 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3)
+10:44:53.758 INFO Subtitle tracks: 4 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:53.759 INFO Subtitle tracks: 5 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:53.760 INFO Subtitle tracks: 6 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:53.761 INFO Subtitle tracks: 7 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:53.762 INFO Subtitle tracks: 8 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:53.764 INFO Subtitle tracks: 9 - pol (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:53.765 INFO Subtitle tracks: 10 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:44:53.768 INFO Subtitle tracks: 10 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:44:53.773 INFO Subtitle tracks: 11 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:44:53.787 INFO Subtitle tracks: 12 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:44:53.787 INFO Read 7: view 2, position 786432 (chunk 0), 262144 bytes
+10:44:53.866 INFO Subtitle tracks: 14 - eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:44:53.868 INFO Subtitle tracks: 14 - eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:44:54.007 INFO Opened: video HEVC 1920x1080 23.976fps, audio AAC 6ch [en]
+10:44:54.008 INFO Video range: Sdr (decoder subtype HEVC, transfer function 5)
+10:44:54.889 INFO Subtitle tracks: 16 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:54.889 INFO Subtitle tracks: 16 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:54.892 INFO Subtitle tracks: 17 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:44:54.894 WARN No response after 16 s: POST api.strem.io/api/events
+10:44:54.894 WARN No response after 18 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/amp.json
+10:44:54.895 WARN No response after 20 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/dnp.json
+10:44:54.895 WARN No response after 20 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/dnp.json
+10:44:54.895 WARN No response after 20 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/hbm.json
+10:44:54.896 WARN No response after 20 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/hbm.json
+10:44:54.896 WARN No response after 20 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/nfx.json
+10:44:54.896 WARN No response after 20 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/nfx.json
+10:44:54.896 WARN No response after 20 s: GET 127.0.0.1/local-addon/catalog/other/local.json
+10:44:54.896 WARN No response after 20 s: GET v3-cinemeta.strem.io/catalog/series/last-videos/<366 chars>
+10:44:54.897 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:44:54.897 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:44:54.899 INFO Display mode set: 1920x1080@23.976 None
+10:44:54.907 INFO Prebuffered 80 MB (243.3 s of video) in 3 ms
+10:44:55.589 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:44:55.589 INFO Read 8: view 2, position 1048576 (chunk 0), 262144 bytes
+10:44:55.589 INFO Read 9: view 2, position 1310720 (chunk 0), 262144 bytes
+10:44:55.590 INFO Read 10: view 2, position 1572864 (chunk 0), 262144 bytes
+10:44:55.590 INFO Read 11: view 2, position 1835008 (chunk 0), 262144 bytes
+10:44:55.594 INFO Playback buffering started: 00:00:00 / 00:21:34, state Playing, downloaded 100.0%, memory 1155 / 3328 MB
+10:44:55.595 INFO Playback buffering ended: 00:00:00 / 00:21:34, state Playing, downloaded 100.0%, memory 1162 / 3328 MB
+10:44:55.875 INFO Read 12: view 2, position 2097152 (chunk 0), 262144 bytes
+10:44:56.013 INFO Restart seek after play: +10 s from 00:00:01 (waited 424 ms for playback)
+10:44:56.017 INFO Read 13: view 2, position 2097152 (chunk 0), 262144 bytes
+10:44:56.020 INFO Read 14: view 2, position 2359296 (chunk 0), 262144 bytes
+10:44:56.021 INFO Playback buffering started: 00:00:11 / 00:21:34, state Buffering, downloaded 100.0%, memory 1204 / 3328 MB
+10:44:56.021 INFO Read 15: view 2, position 2621440 (chunk 0), 262144 bytes
+10:44:56.022 INFO Read 16: view 2, position 2883584 (chunk 0), 262144 bytes
+10:44:56.022 INFO Read 17: view 2, position 3145728 (chunk 0), 262144 bytes
+10:44:56.023 INFO Read 18: view 2, position 3407872 (chunk 0), 262144 bytes
+10:44:56.023 INFO Read 19: view 2, position 3670016 (chunk 0), 262144 bytes
+10:44:56.024 INFO Read 20: view 2, position 3932160 (chunk 0), 262144 bytes
+10:44:56.024 INFO Read 21: view 2, position 4194304 (chunk 1), 262144 bytes
+10:44:56.025 INFO Read 22: view 2, position 4456448 (chunk 1), 262144 bytes
+10:44:56.026 INFO Read 23: view 2, position 4718592 (chunk 1), 262144 bytes
+10:44:56.027 INFO Read 24: view 2, position 4980736 (chunk 1), 262144 bytes
+10:44:56.316 INFO Read 25: view 2, position 5242880 (chunk 1), 262144 bytes
+10:44:56.317 INFO Read 26: view 2, position 5505024 (chunk 1), 262144 bytes
+10:44:56.318 INFO Playback buffering ended: 00:00:11 / 00:21:34, state Playing, downloaded 100.0%, memory 1249 / 3328 MB
+10:44:57.123 INFO Read 27: view 2, position 5767168 (chunk 1), 262144 bytes
+10:44:57.332 INFO Read 28: view 2, position 786432 (chunk 0), 262144 bytes
+10:44:57.336 INFO Read 29: view 2, position 1048576 (chunk 0), 262144 bytes
+10:44:57.336 INFO Playback buffering started: 00:00:01 / 00:21:34, state Buffering, downloaded 100.0%, memory 1262 / 3328 MB
+10:44:57.337 INFO Read 30: view 2, position 1310720 (chunk 0), 262144 bytes
+10:44:57.338 INFO Read 31: view 2, position 1572864 (chunk 0), 262144 bytes
+10:44:57.432 INFO Read 32: view 2, position 1835008 (chunk 0), 262144 bytes
+10:44:57.432 INFO Read 33: view 2, position 2097152 (chunk 0), 262144 bytes
+10:44:57.432 INFO Playback buffering ended: 00:00:01 / 00:21:34, state Playing, downloaded 100.0%, memory 1263 / 3328 MB
+10:44:57.441 INFO Restart seek after play done in 1427 ms
+10:44:58.245 INFO Read 34: view 2, position 2359296 (chunk 0), 262144 bytes
+10:44:58.850 INFO Read 35: view 2, position 2621440 (chunk 0), 262144 bytes
+10:44:59.755 INFO Read 36: view 2, position 2883584 (chunk 0), 262144 bytes
+10:44:59.903 WARN No response after 15 s: GET torrentio.strem.fun/<91 chars>/stream/series/tt1266020%3A6%3A3.json
+10:44:59.903 WARN No response after 15 s: GET 127.0.0.1/local-addon/stream/series/tt1266020%3A6%3A3.json
+10:44:59.903 WARN No response after 15 s: GET v3-cinemeta.strem.io/meta/series/tt1266020.json
+10:44:59.904 WARN No response after 15 s: OPTIONS likes.stremio.com/api/get_status?<query>
+10:44:59.904 WARN No response after 15 s: POST api.strem.io/api/datastoreGet
+10:45:00.157 INFO Read 37: view 2, position 3145728 (chunk 0), 262144 bytes
+10:45:00.760 INFO Read 38: view 2, position 3407872 (chunk 0), 262144 bytes
+10:45:01.463 INFO Read 39: view 2, position 3670016 (chunk 0), 262144 bytes
+10:45:02.268 INFO Read 40: view 2, position 3932160 (chunk 0), 262144 bytes
+10:45:04.773 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:45:04.786 INFO Subtitle menu: 20 track(s), highlighting row 0
+10:45:04.824 INFO SRC xinput btn=X pads=1
+10:45:04.993 INFO Pace: 00:00:08 +5.0s media / 5.0s wall, download 708 Mbps, buffer 425 MB (1295 s), waited reads 1 (100.0%), Playing
+10:45:04.994 INFO Views: v2 43 reads 10 MB at 0-5 MB, waits 1 (769 ms total, max 769); in flight max 1, overlapped 0, behind a pending read 0
+10:45:04.994 INFO File 0.42 GB, average bitrate 2.8 Mbps
+10:45:05.853 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:05.878 INFO SRC xinput btn=Up pads=1
+10:45:06.618 INFO SRC xinput btn=Up pads=1
+10:45:06.805 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:06.869 INFO SRC xinput btn=Up pads=1
+10:45:07.042 INFO SRC xinput btn=Up pads=1
+10:45:07.202 INFO SRC xinput btn=Up pads=1
+10:45:07.908 INFO Request XmlHttpRequest POST api.strem.io/api/events
+10:45:09.437 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:45:09.439 INFO Subtitles: spa (OpenSubtitles v3)
+10:45:09.491 INFO SRC xinput btn=A pads=1
+10:45:10.038 INFO Pace: 00:00:13 +5.0s media / 5.0s wall, download 0 Mbps, buffer 421 MB (1283 s), waited reads 1 (100.0%), Playing
+10:45:10.039 INFO Views: v2 6 reads 1 MB at 4-6 MB, waits 0 (0 ms total, max 0); in flight max 1, overlapped 0, behind a pending read 0
+10:45:11.781 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:45:11.789 INFO Subtitle menu: 20 track(s), highlighting row 18
+10:45:11.833 INFO SRC xinput btn=X pads=1
+10:45:12.453 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:45:12.499 INFO SRC xinput btn=Down pads=1
+10:45:12.666 INFO SRC xinput btn=Down pads=1
+10:45:12.875 INFO SRC xinput btn=Down pads=1
+10:45:13.525 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:45:13.548 INFO SRC xinput btn=Down pads=1
+10:45:14.277 INFO ACCEL key vk=0xCD sc=0 ext=False
+10:45:14.282 INFO Subtitle re-time: downloading with delay 0s / rate 0.95x
+10:45:14.299 INFO SRC xinput btn=Left pads=1
+10:45:14.967 INFO Subtitle re-time: applied delay 0s / rate 0.95x to 20 subtitle(s)
+10:45:15.086 INFO Pace: 00:00:17 +4.3s media / 5.0s wall, download 0 Mbps, buffer 421 MB (0 s), waited reads 1 (-100.0%), Opening
+10:45:15.086 INFO Views: v2 6 reads 1 MB at 6-7 MB, waits 0 (0 ms total, max 0); in flight max 1, overlapped 0, behind a pending read 0
+10:45:15.920 INFO Subtitle tracks: 1 - hrv (OpenSubtitles v3)
+10:45:15.925 INFO Opened: video HEVC 1920x1080 23.976fps, audio AAC 6ch [en]
+10:45:15.926 INFO Video range: Sdr (decoder subtype HEVC, transfer function 5)
+10:45:15.939 INFO Playback buffering started: 00:00:17 / 00:21:34, state Buffering, downloaded 1.4%, memory 1323 / 3328 MB
+10:45:15.940 INFO Subtitle tracks: 4 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.941 INFO Subtitle tracks: 5 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:15.941 INFO Display mode set: 1920x1080@23.976 None
+10:45:15.942 INFO Prebuffered 421 MB (1282.6 s of video) in 0 ms
+10:45:15.942 INFO Resumed from 00:00:13
+10:45:15.944 INFO Subtitle tracks: 7 -  (embedded), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:15.945 INFO Subtitle tracks: 8 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.945 INFO Subtitle tracks: 8 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.946 INFO Subtitle tracks: 10 - eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.946 INFO Subtitle tracks: 11 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.946 INFO Subtitle tracks: 12 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.947 INFO Subtitle tracks: 12 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.947 INFO Subtitle tracks: 14 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.948 INFO Subtitle tracks: 15 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:15.949 INFO Subtitle tracks: 16 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:15.950 INFO Subtitle tracks: 17 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.951 INFO Subtitle tracks: 18 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.952 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.952 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.953 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.953 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:15.953 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:16.750 INFO Restart seek after play: +10 s from 00:00:13 (waited 806 ms for playback)
+10:45:16.754 INFO Playback buffering ended: 00:00:23 / 00:21:34, state Buffering, downloaded 1.8%, memory 1422 / 3328 MB
+10:45:16.755 INFO Playback buffering started: 00:00:23 / 00:21:34, state Buffering, downloaded 1.8%, memory 1422 / 3328 MB
+10:45:16.845 INFO Playback buffering ended: 00:00:23 / 00:21:34, state Playing, downloaded 2.2%, memory 1430 / 3328 MB
+10:45:16.854 INFO Playback buffering started: 00:00:23 / 00:21:34, state Buffering, downloaded 2.2%, memory 1431 / 3328 MB
+10:45:17.146 INFO Playback buffering ended: 00:00:23 / 00:21:34, state Playing, downloaded 2.2%, memory 1432 / 3328 MB
+10:45:17.850 INFO Playback buffering started: 00:00:13 / 00:21:34, state Buffering, downloaded 2.2%, memory 1436 / 3328 MB
+10:45:18.642 INFO Playback buffering ended: 00:00:13 / 00:21:34, state Playing, downloaded 1.3%, memory 1438 / 3328 MB
+10:45:18.694 INFO Restart seek after play done in 1943 ms
+10:45:22.933 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:23.010 INFO SRC xinput btn=Up pads=1
+10:45:23.260 INFO SRC xinput btn=Up pads=1
+10:45:23.677 INFO SRC xinput btn=Up pads=1
+10:45:23.925 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:23.969 INFO SRC xinput btn=Up pads=1
+10:45:24.317 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:45:24.317 INFO Subtitles: spa (OpenSubtitles v3)
+10:45:24.348 INFO SRC xinput btn=A pads=1
+10:45:25.137 WARN No response after 17 s: POST api.strem.io/api/events
+10:45:26.014 INFO Pace: 00:00:20 +5.0s media / 5.0s wall, download 0 Mbps, buffer 421 MB (1283 s), waited reads 1 (3.6%), Playing
+10:45:26.014 INFO Views: in flight max 0, overlapped 0, behind a pending read 0
+10:45:29.653 INFO ACCEL key vk=0xD0 sc=0 ext=False
+10:45:29.725 INFO SRC xinput btn=View pads=1
+10:45:29.738 INFO Controls help opened (View)
+10:45:30.709 INFO ACCEL key vk=0xD0 sc=0 ext=False
+10:45:30.709 INFO Controls help closed
+10:45:30.727 INFO SRC xinput btn=View pads=1
+10:45:30.729 INFO Controls help opened (View)
+10:45:31.060 INFO Pace: 00:00:25 +5.0s media / 5.0s wall, download 0 Mbps, buffer 421 MB (1283 s), waited reads 1 (4.0%), Playing
+10:45:31.060 INFO Views: in flight max 0, overlapped 0, behind a pending read 0
+10:45:31.677 INFO ACCEL key vk=0xC4 sc=0 ext=False
+10:45:31.678 INFO Controls help closed
+10:45:32.685 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:45:32.688 INFO Subtitle menu: 20 track(s), highlighting row 18
+10:45:32.729 INFO SRC xinput btn=X pads=1
+10:45:33.701 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:45:33.771 INFO SRC xinput btn=Down pads=1
+10:45:34.861 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:34.904 INFO SRC xinput btn=Up pads=1
+10:45:35.195 INFO SRC xinput btn=Up pads=1
+10:45:35.509 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:45:35.509 INFO Subtitles: spa (OpenSubtitles v3)
+10:45:35.526 INFO SRC xinput btn=A pads=1
+10:45:36.107 INFO Pace: 00:00:31 +5.0s media / 5.0s wall, download 0 Mbps, buffer 421 MB (1283 s), waited reads 1 (4.4%), Playing
+10:45:36.107 INFO Views: in flight max 0, overlapped 0, behind a pending read 0
+10:45:37.709 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:45:37.711 INFO Subtitle menu: 20 track(s), highlighting row 17
+10:45:37.776 INFO SRC xinput btn=X pads=1
+10:45:38.277 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:45:38.323 INFO SRC xinput btn=Down pads=1
+10:45:38.781 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:45:38.781 INFO Subtitles: spa (OpenSubtitles v3)
+10:45:38.821 INFO SRC xinput btn=A pads=1
+10:45:39.573 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:45:39.575 INFO Subtitle menu: 20 track(s), highlighting row 18
+10:45:39.619 INFO SRC xinput btn=X pads=1
+10:45:39.869 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:45:39.944 INFO SRC xinput btn=Down pads=1
+10:45:40.111 INFO SRC xinput btn=Down pads=1
+10:45:40.277 INFO SRC xinput btn=Down pads=1
+10:45:40.444 INFO SRC xinput btn=Down pads=1
+10:45:41.013 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:45:41.035 INFO SRC xinput btn=Down pads=1
+10:45:41.153 INFO Pace: 00:00:36 +5.0s media / 5.0s wall, download 0 Mbps, buffer 421 MB (1283 s), waited reads 1 (4.7%), Playing
+10:45:41.154 INFO Views: in flight max 0, overlapped 0, behind a pending read 0
+10:45:41.479 INFO ACCEL key vk=0xCD sc=0 ext=False
+10:45:41.481 INFO Subtitle re-time: downloading with delay 0s / rate 0.9x
+10:45:41.530 INFO SRC xinput btn=Left pads=1
+10:45:41.785 INFO Subtitle re-time: applied delay 0s / rate 0.9x to 20 subtitle(s)
+10:45:42.906 INFO Subtitle tracks: 1 - pob (OpenSubtitles v3)
+10:45:42.907 INFO Subtitle tracks: 3 - pob (OpenSubtitles v3), eng (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:42.908 INFO Subtitle tracks: 4 - por (OpenSubtitles v3), eng (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:42.908 INFO Subtitle tracks: 5 - eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:42.909 INFO Subtitle tracks: 6 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:42.910 INFO Subtitle tracks: 7 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:42.910 INFO Subtitle tracks: 7 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:43.010 INFO Subtitle tracks: 8 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:43.013 INFO Subtitle tracks: 9 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:43.015 INFO Subtitle tracks: 11 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:45:43.015 INFO Subtitle tracks: 12 -  (embedded), eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:45:43.017 INFO Subtitle tracks: 13 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:45:43.017 INFO Subtitle tracks: 13 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:45:43.033 INFO Subtitle tracks: 15 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:45:43.034 INFO Subtitle tracks: 16 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:43.035 INFO Subtitle tracks: 17 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), spa (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:43.036 INFO Subtitle tracks: 18 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:43.037 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:43.038 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:43.039 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:43.056 INFO Opened: video HEVC 1920x1080 23.976fps, audio AAC 6ch [en]
+10:45:43.056 INFO Video range: Sdr (decoder subtype HEVC, transfer function 5)
+10:45:43.069 INFO Playback buffering started: 00:00:36 / 00:21:34, state Buffering, downloaded -100.0%, memory 1342 / 3328 MB
+10:45:43.069 INFO Display mode set: 1920x1080@23.976 None
+10:45:43.070 INFO Prebuffered 421 MB (1282.6 s of video) in 0 ms
+10:45:43.071 INFO Resumed from 00:00:36
+10:45:43.530 INFO Playback buffering ended: 00:00:36 / 00:21:34, state Paused, downloaded 3.1%, memory 1441 / 3328 MB
+10:45:43.530 INFO Playback buffering started: 00:00:36 / 00:21:34, state Buffering, downloaded 3.1%, memory 1441 / 3328 MB
+10:45:43.565 INFO Playback buffering ended: 00:00:36 / 00:21:34, state Playing, downloaded 3.4%, memory 1445 / 3328 MB
+10:45:43.622 INFO Restart seek after play: +10 s from 00:00:36 (waited 549 ms for playback)
+10:45:43.630 INFO Playback buffering started: 00:00:46 / 00:21:34, state Buffering, downloaded 3.6%, memory 1446 / 3328 MB
+10:45:43.721 INFO Playback buffering ended: 00:00:46 / 00:21:34, state Playing, downloaded 4.1%, memory 1449 / 3328 MB
+10:45:44.928 INFO Playback buffering started: 00:00:36 / 00:21:34, state Buffering, downloaded -100.0%, memory 1456 / 3328 MB
+10:45:45.416 INFO Playback buffering ended: 00:00:36 / 00:21:34, state Playing, downloaded 3.2%, memory 1459 / 3328 MB
+10:45:45.417 INFO Restart seek after play done in 1794 ms
+10:45:49.829 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:49.871 INFO SRC xinput btn=Up pads=1
+10:45:50.325 INFO ACCEL key vk=0xCE sc=0 ext=False
+10:45:50.327 INFO Subtitle re-time: downloading with delay 0.5s / rate 0.9x
+10:45:50.371 INFO SRC xinput btn=Right pads=1
+10:45:50.628 INFO Subtitle re-time: applied delay 0.5s / rate 0.9x to 20 subtitle(s)
+10:45:51.513 INFO Subtitle tracks: 1 - ita (OpenSubtitles v3)
+10:45:51.514 INFO Subtitle tracks: 3 -  (embedded), ita (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.515 INFO Subtitle tracks: 4 - ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.515 INFO Subtitle tracks: 4 - ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.516 INFO Subtitle tracks: 6 -  (embedded), eng (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.516 INFO Subtitle tracks: 7 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.517 INFO Subtitle tracks: 7 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.517 INFO Subtitle tracks: 8 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3)
+10:45:51.605 INFO Subtitle tracks: 9 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.608 INFO Subtitle tracks: 11 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.608 INFO Subtitle tracks: 12 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.609 INFO Subtitle tracks: 13 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.610 INFO Subtitle tracks: 14 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.611 INFO Subtitle tracks: 15 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:45:51.612 INFO Subtitle tracks: 16 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.613 INFO Subtitle tracks: 17 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.614 INFO Subtitle tracks: 18 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:45:51.614 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:51.615 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:51.627 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:45:51.648 INFO Opened: video HEVC 1920x1080 23.976fps, audio AAC 6ch [en]
+10:45:51.648 INFO Video range: Sdr (decoder subtype HEVC, transfer function 5)
+10:45:51.662 INFO Playback buffering started: 00:00:41 / 00:21:34, state Buffering, downloaded -100.0%, memory 1371 / 3328 MB
+10:45:51.663 INFO Display mode set: 1920x1080@23.976 None
+10:45:51.664 INFO Prebuffered 421 MB (1282.6 s of video) in 0 ms
+10:45:51.665 INFO Resumed from 00:00:36
+10:45:52.655 INFO Playback buffering ended: 00:00:36 / 00:21:34, state Paused, downloaded 3.6%, memory 1424 / 3328 MB
+10:45:52.690 INFO Playback buffering started: 00:00:36 / 00:21:34, state Buffering, downloaded 3.6%, memory 1474 / 3328 MB
+10:45:52.709 INFO Playback buffering ended: 00:00:36 / 00:21:34, state Playing, downloaded 3.6%, memory 1476 / 3328 MB
+10:45:52.768 INFO Restart seek after play: +10 s from 00:00:36 (waited 1101 ms for playback)
+10:45:52.774 INFO Playback buffering started: 00:00:46 / 00:21:34, state Buffering, downloaded 3.6%, memory 1476 / 3328 MB
+10:45:52.957 INFO Playback buffering ended: 00:00:46 / 00:21:34, state Playing, downloaded 4.0%, memory 1480 / 3328 MB
+10:45:53.973 INFO Playback buffering started: 00:00:36 / 00:21:34, state Buffering, downloaded 4.1%, memory 1484 / 3328 MB
+10:45:55.050 INFO Playback buffering ended: 00:00:36 / 00:21:34, state Playing, downloaded 3.1%, memory 1483 / 3328 MB
+10:45:55.050 INFO Restart seek after play done in 2281 ms
+10:45:58.028 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:45:58.087 INFO SRC xinput btn=Up pads=1
+10:45:58.337 INFO SRC xinput btn=Up pads=1
+10:45:58.588 INFO SRC xinput btn=Up pads=1
+10:45:58.838 INFO SRC xinput btn=Up pads=1
+10:45:59.820 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:45:59.821 INFO Subtitles: spa (OpenSubtitles v3)
+10:45:59.842 INFO SRC xinput btn=A pads=1
+10:46:01.085 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:46:01.087 INFO Subtitle menu: 20 track(s), highlighting row 17
+10:46:01.098 INFO SRC xinput btn=X pads=1
+10:46:01.758 INFO Pace: 00:00:42 +5.0s media / 5.0s wall, download 0 Mbps, buffer 421 MB (1283 s), waited reads 1 (5.2%), Playing
+10:46:01.758 INFO Views: in flight max 0, overlapped 0, behind a pending read 0
+10:46:01.932 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:46:03.413 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:03.413 INFO Subtitles: spa (OpenSubtitles v3)
+10:46:03.429 INFO SRC xinput btn=A pads=1
+10:46:05.932 INFO ACCEL key vk=0xC4 sc=0 ext=False
+10:46:05.933 INFO Playback stopped by user: 00:00:47 / 00:21:34, state Playing, downloaded 5.6%, memory 1442 / 3328 MB
+10:46:06.138 INFO Playback stopped by user
+10:46:06.825 INFO View 2 disposed at 7 MB
+10:46:06.826 WARN web: INPUT pointermove | target=DIV.content-qTAjU
+10:46:06.827 WARN web: INPUT mousemove | target=DIV.content-qTAjU
+10:46:06.828 INFO Request XmlHttpRequest POST api.strem.io/api/addonCollectionGet
+10:46:06.828 INFO Request XmlHttpRequest POST api.strem.io/api/getUser
+10:46:06.828 INFO Request XmlHttpRequest POST api.strem.io/api/datastoreMeta
+10:46:06.937 WARN web: INPUT pointermove | target=DIV.content-qTAjU
+10:46:06.937 WARN web: INPUT mousemove | target=DIV.content-qTAjU
+10:46:09.381 INFO ACCEL key vk=0xC4 sc=0 ext=False
+10:46:09.420 INFO Request XmlHttpRequest OPTIONS likes.stremio.com/api/get_status?<query>
+10:46:09.421 INFO Request XmlHttpRequest POST api.strem.io/api/datastoreGet
+10:46:09.477 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:09.804 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:46:10.126 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:10.559 WARN web: INPUT keydown | key=Unidentified code= trusted=true target=BODY
+10:46:10.559 INFO web: Key from WebView2: key=Unidentified code= keyCode=37
+10:46:10.641 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:46:10.893 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:12.012 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:12.014 WARN web: INPUT pointerdown | target=path.[object SVGAnimatedString]
+10:46:12.014 WARN web: INPUT mousedown | target=path.[object SVGAnimatedString]
+10:46:12.015 WARN web: INPUT focus | target=A.nav-tab-button-tW6qT nav-tab-b
+10:46:12.015 WARN web: INPUT focusin | target=A.nav-tab-button-tW6qT nav-tab-b
+10:46:12.016 WARN web: INPUT pointerup | target=path.[object SVGAnimatedString]
+10:46:12.016 WARN web: INPUT mouseup | target=path.[object SVGAnimatedString]
+10:46:12.016 WARN web: INPUT click | target=path.[object SVGAnimatedString]
+10:46:12.043 INFO SRC xinput btn=A pads=1
+10:46:12.080 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/feed.json
+10:46:12.086 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:12.206 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/nfx.json
+10:46:12.206 INFO Request XmlHttpRequest GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/nfx.json
+10:46:12.244 INFO Request XmlHttpRequest GET cinemeta-catalogs.strem.io/feed.json
+10:46:12.245 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:46:12.492 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:46:13.732 INFO ACCEL key vk=0xD4 sc=0 ext=False
+10:46:13.853 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:14.430 WARN web: INPUT wheel | target=DIV.card-MfwV4
+10:46:15.030 WARN web: INPUT wheel | target=DIV.card-MfwV4
+10:46:15.724 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:46:15.956 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:16.636 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:16.637 WARN web: INPUT pointerdown | target=DIV.toggle-toOWM
+10:46:16.638 WARN web: INPUT mousedown | target=DIV.toggle-toOWM
+10:46:16.638 WARN web: INPUT pointerup | target=DIV.toggle-toOWM
+10:46:16.638 WARN web: INPUT mouseup | target=DIV.toggle-toOWM
+10:46:16.639 WARN web: INPUT click | target=DIV.toggle-toOWM
+10:46:16.648 INFO SRC xinput btn=A pads=1
+10:46:16.725 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:16.956 INFO ACCEL key vk=0xD4 sc=0 ext=False
+10:46:17.276 INFO ACCEL key vk=0xD8 sc=0 ext=False
+10:46:17.332 WARN web: INPUT wheel | target=DIV.scrim-OiWmu
+10:46:17.501 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:17.866 WARN web: INPUT wheel | target=DIV.scrim-OiWmu
+10:46:17.996 INFO ACCEL key vk=0xD4 sc=0 ext=False
+10:46:18.181 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:18.380 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:46:18.908 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:46:19.181 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:20.180 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:20.181 WARN web: INPUT pointerdown | target=DIV.toggle-toOWM
+10:46:20.182 WARN web: INPUT mousedown | target=DIV.toggle-toOWM
+10:46:20.182 WARN web: INPUT pointerup | target=DIV.toggle-toOWM
+10:46:20.182 WARN web: INPUT mouseup | target=DIV.toggle-toOWM
+10:46:20.182 WARN web: INPUT click | target=DIV.toggle-toOWM
+10:46:20.184 INFO SRC xinput btn=A pads=1
+10:46:20.254 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:22.908 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:46:23.148 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:24.260 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:24.261 WARN web: INPUT pointerdown | target=A.item-KTrRf button-container-zV
+10:46:24.262 WARN web: INPUT mousedown | target=A.item-KTrRf button-container-zV
+10:46:24.263 WARN web: INPUT pointerup | target=A.item-KTrRf button-container-zV
+10:46:24.263 WARN web: INPUT mouseup | target=A.item-KTrRf button-container-zV
+10:46:24.264 WARN web: INPUT click | target=A.item-KTrRf button-container-zV
+10:46:24.289 INFO SRC xinput btn=A pads=1
+10:46:24.325 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:24.724 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:46:25.309 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:25.573 WARN No response after 16 s: POST api.strem.io/api/datastoreGet
+10:46:25.574 WARN No response after 16 s: OPTIONS likes.stremio.com/api/get_status?<query>
+10:46:25.574 WARN No response after 18 s: POST api.strem.io/api/datastoreMeta
+10:46:25.574 WARN No response after 18 s: POST api.strem.io/api/getUser
+10:46:25.574 WARN No response after 18 s: POST api.strem.io/api/addonCollectionGet
+10:46:26.972 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:26.973 WARN web: INPUT pointerdown | target=DIV.button-teWrC button-container-
+10:46:26.974 WARN web: INPUT mousedown | target=DIV.button-teWrC button-container-
+10:46:26.975 WARN web: INPUT pointerup | target=DIV.button-teWrC button-container-
+10:46:26.975 WARN web: INPUT mouseup | target=DIV.button-teWrC button-container-
+10:46:26.976 WARN web: INPUT click | target=DIV.button-teWrC button-container-
+10:46:26.991 INFO SRC xinput btn=A pads=1
+10:46:27.141 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:28.132 INFO ACCEL key vk=0xD8 sc=0 ext=False
+10:46:28.178 WARN web: INPUT wheel | target=DIV.label-IR8xX
+10:46:28.452 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:28.778 WARN web: INPUT wheel | target=DIV.option-HcOSE button-container-
+10:46:29.312 WARN web: INPUT wheel | target=DIV.label-IR8xX
+10:46:29.461 INFO ACCEL key vk=0xD8 sc=0 ext=False
+10:46:29.462 WARN web: INPUT keydown | key=Unidentified code= trusted=true target=BODY
+10:46:29.462 INFO web: Key from WebView2: key=Unidentified code= keyCode=216
+10:46:29.846 WARN web: INPUT wheel | target=DIV.option-HcOSE button-container-
+10:46:29.941 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:30.595 WARN No response after 18 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/series/nfx.json
+10:46:30.595 WARN No response after 18 s: GET 7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/catalog/movie/nfx.json
+10:46:30.595 WARN No response after 18 s: GET cinemeta-catalogs.strem.io/feed.json
+10:46:32.292 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:32.293 WARN web: INPUT pointerdown | target=DIV.label-IR8xX
+10:46:32.294 WARN web: INPUT mousedown | target=DIV.label-IR8xX
+10:46:32.295 WARN web: INPUT pointerup | target=DIV.label-IR8xX
+10:46:32.296 WARN web: INPUT mouseup | target=DIV.label-IR8xX
+10:46:32.296 WARN web: INPUT click | target=DIV.label-IR8xX
+10:46:32.297 INFO SRC xinput btn=A pads=1
+10:46:32.388 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:33.449 WARN web: INPUT wheel | target=DIV.color-input color-input-contai
+10:46:34.450 WARN web: INPUT wheel | target=DIV.row-LDrFM
+10:46:34.508 INFO ACCEL key vk=0xD8 sc=0 ext=False
+10:46:34.892 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:37.687 WARN web: INPUT wheel | target=DIV.button-teWrC button-container-
+10:46:37.907 INFO Request XmlHttpRequest POST api.strem.io/api/events
+10:46:38.287 WARN web: INPUT wheel | target=DIV.row-LDrFM
+10:46:40.564 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:46:40.917 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:49.108 INFO ACCEL key vk=0xD4 sc=0 ext=False
+10:46:49.140 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:46:49.148 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:49.964 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:49.965 WARN web: INPUT pointerdown | target=DIV.row-LDrFM
+10:46:49.966 WARN web: INPUT mousedown | target=DIV.row-LDrFM
+10:46:49.966 WARN web: INPUT pointerup | target=DIV.row-LDrFM
+10:46:49.966 WARN web: INPUT mouseup | target=DIV.row-LDrFM
+10:46:49.966 WARN web: INPUT click | target=DIV.row-LDrFM
+10:46:49.981 INFO SRC xinput btn=A pads=1
+10:46:50.044 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:51.236 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:51.237 WARN web: INPUT pointerdown | target=DIV.row-LDrFM
+10:46:51.237 WARN web: INPUT mousedown | target=DIV.row-LDrFM
+10:46:51.237 WARN web: INPUT pointerup | target=DIV.row-LDrFM
+10:46:51.237 WARN web: INPUT mouseup | target=DIV.row-LDrFM
+10:46:51.238 WARN web: INPUT click | target=DIV.row-LDrFM
+10:46:51.249 INFO SRC xinput btn=A pads=1
+10:46:51.292 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:52.132 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:46:52.133 WARN web: INPUT pointerdown | target=DIV.toggle-toOWM
+10:46:52.133 WARN web: INPUT mousedown | target=DIV.toggle-toOWM
+10:46:52.133 WARN web: INPUT pointerup | target=DIV.toggle-toOWM
+10:46:52.134 WARN web: INPUT mouseup | target=DIV.toggle-toOWM
+10:46:52.134 WARN web: INPUT click | target=DIV.toggle-toOWM
+10:46:52.150 INFO SRC xinput btn=A pads=1
+10:46:52.212 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:54.070 WARN web: INPUT wheel | target=DIV.row-LDrFM
+10:46:54.132 INFO ACCEL key vk=0xD7 sc=0 ext=False
+10:46:54.468 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:46:55.204 WARN web: INPUT wheel | target=DIV.row-LDrFM
+10:46:55.703 WARN No response after 17 s: POST api.strem.io/api/events
+10:47:01.955 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:01.957 WARN web: INPUT pointerdown | target=DIV.item-label-wnnvX
+10:47:01.957 WARN web: INPUT mousedown | target=DIV.item-label-wnnvX
+10:47:01.959 WARN web: INPUT pointerup | target=DIV.item-label-wnnvX
+10:47:01.959 WARN web: INPUT mouseup | target=DIV.item-label-wnnvX
+10:47:01.959 WARN web: INPUT click | target=DIV.item-label-wnnvX
+10:47:01.959 INFO SRC xinput btn=A pads=1
+10:47:02.037 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:05.483 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:05.485 WARN web: INPUT pointerdown | target=DIV.item-label-wnnvX
+10:47:05.485 WARN web: INPUT mousedown | target=DIV.item-label-wnnvX
+10:47:05.487 WARN web: INPUT pointerup | target=DIV.item-label-wnnvX
+10:47:05.487 WARN web: INPUT mouseup | target=DIV.item-label-wnnvX
+10:47:05.487 WARN web: INPUT click | target=DIV.item-label-wnnvX
+10:47:05.496 INFO SRC xinput btn=A pads=1
+10:47:05.565 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:07.107 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:47:07.524 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:47:07.564 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:07.907 INFO Request XmlHttpRequest POST api.strem.io/api/events
+10:47:08.476 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:08.477 WARN web: INPUT pointerdown | target=DIV.toggle-toOWM
+10:47:08.478 WARN web: INPUT mousedown | target=DIV.toggle-toOWM
+10:47:08.479 WARN web: INPUT pointerup | target=DIV.toggle-toOWM
+10:47:08.479 WARN web: INPUT mouseup | target=DIV.toggle-toOWM
+10:47:08.479 WARN web: INPUT click | target=DIV.toggle-toOWM
+10:47:08.499 INFO SRC xinput btn=A pads=1
+10:47:08.543 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:08.716 INFO ACCEL key vk=0xD6 sc=0 ext=False
+10:47:09.236 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:09.995 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:09.997 WARN web: INPUT pointerdown | target=DIV.item-label-wnnvX
+10:47:09.997 WARN web: INPUT mousedown | target=DIV.item-label-wnnvX
+10:47:09.998 WARN web: INPUT pointerup | target=DIV.item-label-wnnvX
+10:47:09.999 WARN web: INPUT mouseup | target=DIV.item-label-wnnvX
+10:47:09.999 WARN web: INPUT click | target=DIV.item-label-wnnvX
+10:47:10.001 INFO SRC xinput btn=A pads=1
+10:47:10.084 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:14.227 INFO ACCEL key vk=0xD3 sc=0 ext=False
+10:47:14.540 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:15.219 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:15.221 WARN web: INPUT pointerdown | target=svg.[object SVGAnimatedString]
+10:47:15.221 WARN web: INPUT mousedown | target=svg.[object SVGAnimatedString]
+10:47:15.222 WARN web: INPUT focus | target=A.nav-tab-button-tW6qT nav-tab-b
+10:47:15.222 WARN web: INPUT focusin | target=A.nav-tab-button-tW6qT nav-tab-b
+10:47:15.223 WARN web: INPUT pointerup | target=svg.[object SVGAnimatedString]
+10:47:15.223 WARN web: INPUT mouseup | target=svg.[object SVGAnimatedString]
+10:47:15.224 WARN web: INPUT click | target=svg.[object SVGAnimatedString]
+10:47:15.240 INFO SRC xinput btn=A pads=1
+10:47:15.327 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:15.483 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:47:15.987 INFO ACCEL key vk=0xD4 sc=0 ext=False
+10:47:16.309 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:16.355 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:47:16.956 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:16.957 WARN web: INPUT pointerdown | target=IMG.poster-image-NiV7O
+10:47:16.958 WARN web: INPUT mousedown | target=IMG.poster-image-NiV7O
+10:47:16.960 WARN web: INPUT pointerup | target=IMG.poster-image-NiV7O
+10:47:16.961 WARN web: INPUT mouseup | target=IMG.poster-image-NiV7O
+10:47:16.961 WARN web: INPUT click | target=IMG.poster-image-NiV7O
+10:47:16.975 INFO SRC xinput btn=A pads=1
+10:47:17.025 INFO Request XmlHttpRequest OPTIONS likes.stremio.com/api/get_status?<query>
+10:47:17.029 INFO Request XmlHttpRequest GET v3-cinemeta.strem.io/meta/series/tt1266020.json
+10:47:17.030 INFO Request XmlHttpRequest GET 127.0.0.1/local-addon/stream/series/tt1266020%3A6%3A3.json
+10:47:17.030 INFO Request XmlHttpRequest GET torrentio.strem.fun/<91 chars>/stream/series/tt1266020%3A6%3A3.json
+10:47:17.030 INFO Request XmlHttpRequest POST api.strem.io/api/datastoreGet
+10:47:17.037 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:17.283 INFO ACCEL key vk=0xD5 sc=0 ext=False
+10:47:17.956 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:20.195 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:20.197 WARN web: INPUT pointerdown | target=DIV.description-sgfNX
+10:47:20.197 WARN web: INPUT mousedown | target=DIV.description-sgfNX
+10:47:20.199 WARN web: INPUT pointerup | target=DIV.description-sgfNX
+10:47:20.200 WARN web: INPUT mouseup | target=DIV.description-sgfNX
+10:47:20.200 WARN web: INPUT click | target=DIV.description-sgfNX
+10:47:20.211 INFO SRC xinput btn=A pads=1
+10:47:20.228 INFO web: Stream: {"url":"https://torrentio.strem.fun/resolve/torbox/b324955c-19fc-4a25-9c1e-9b937208af19/301000d5b12edb0b8a16b4c18353a77b6a2ca25b/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4/2/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4","name":"[TB+] Torrentio\n1080p","description":"Parks.and.Recreation.S06.1080p.BluRay.x265-KONTRAST\nParks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4\n👤 346 💾 425.69 MB ⚙️ TorrentGalaxy","behaviorHints":{"bingeGroup":"torrentio|301000d5b12edb0b8a16b4c18353a77b6a2ca25b","filename":"Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4"}}
+10:47:20.233 INFO Request XmlHttpRequest GET opensubtitles-v3.strem.io/subtitles/series/tt1266020%3A6%3A3.json
+10:47:20.233 INFO Request XmlHttpRequest GET opensubtitlesv3-pro.dexter21767.com/<124 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:47:20.233 INFO Request XmlHttpRequest GET hispasubs.ak-forge.workers.dev/<206 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:47:20.286 WARN web: INPUT keyup | key=Unidentified code= trusted=true target=BODY
+10:47:20.295 INFO Response 200 OK in 63 ms: opensubtitles-v3.strem.io/subtitles/series/tt1266020%3A6%3A3.json
+10:47:20.296 INFO Response 200  in 63 ms: hispasubs.ak-forge.workers.dev/<206 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:47:21.017 INFO Request XmlHttpRequest GET opensubtitles.stremio.homes/es%7Cea/<52 chars>/subtitles/series/tt1266020:6:3.json
+10:47:21.019 INFO Response 302  in 782 ms: opensubtitlesv3-pro.dexter21767.com/<124 chars>/subtitles/series/tt1266020%3A6%3A3.json
+10:47:21.020 INFO Response 200 OK in 0 ms: opensubtitles.stremio.homes/es%7Cea/<52 chars>/subtitles/series/tt1266020:6:3.json
+10:47:21.020 INFO web: Subtitles found: 58 from 3 addon(s), preferred spl; passing 20
+10:47:21.020 INFO Native play: [TB+] Torrentio 1080p | Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4
+10:47:21.021 INFO Stream URL: https://torrentio.strem.fun/resolve/torbox/b324955c-19fc-4a25-9c1e-9b937208af19/301000d5b12edb0b8a16b4c18353a77b6a2ca25b/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4/2/Parks.and.Recreation.S06E03.1080p.BluRay.x265-KONTRAST.mp4
+10:47:21.035 INFO Initial volume: 50%
+10:47:21.036 INFO Playback rate: 1x, muted: False
+10:47:21.242 INFO Probe 0: torrentio.strem.fun 302 in 205 ms
+10:47:22.110 INFO Probe 1: api.torbox.app 307 in 868 ms
+10:47:22.282 INFO Buffered playback: 6 connections, 768 MB read-ahead, video/mp4
+10:47:22.285 INFO Probe 2: nexus-082.latm.tb-cdn.cx 206 in 172 ms
+10:47:22.285 INFO Probe result: final host nexus-082.latm.tb-cdn.cx, size 446372657 bytes, type 'video/mp4', ranges yes, server 'Nexus/1.0'
+10:47:22.285 INFO Stream view 1 created by page at 0 MB
+10:47:22.285 INFO Stream view 2 created by CloneStream at 0 MB (from view 1)
+10:47:22.428 INFO External subtitles: 20 (timing: 0.5s / 0.9x)
+10:47:22.429 INFO Read 1: view 2, position 0 (chunk 0), 16 bytes
+10:47:22.861 INFO Chunk 2: 4 MB in 578 ms (58 Mbps), attempt 1
+10:47:22.863 INFO Chunk 1: 4 MB in 581 ms (58 Mbps), attempt 1
+10:47:22.863 INFO Chunk 3: 4 MB in 581 ms (58 Mbps), attempt 1
+10:47:22.924 INFO Chunk 0: 4 MB in 642 ms (52 Mbps), attempt 1
+10:47:22.925 WARN Read waited 496 ms: view 2, position 0 (chunk 0, was downloading), playhead chunk 0, buffered ahead 16 MB
+10:47:22.925 INFO Read 2: view 2, position 0 (chunk 0), 1024 bytes
+10:47:22.925 INFO Read 3: view 2, position 0 (chunk 0), 262144 bytes
+10:47:22.926 INFO Read 4: view 2, position 262144 (chunk 0), 262144 bytes
+10:47:22.926 INFO Read 5: view 2, position 524288 (chunk 0), 262144 bytes
+10:47:22.927 INFO Read 6: view 2, position 786432 (chunk 0), 262144 bytes
+10:47:22.961 INFO Subtitle tracks: 1 - hrv (OpenSubtitles v3)
+10:47:22.964 WARN Subtitles: no track matched language "spl" — leaving as the player defaults
+10:47:22.967 INFO Subtitle tracks: 3 -  (embedded), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3)
+10:47:22.968 INFO Subtitle tracks: 4 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:22.969 INFO Subtitle tracks: 5 - spa (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:22.969 INFO Subtitle tracks: 6 - por (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.970 INFO Subtitle tracks: 7 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.971 INFO Subtitle tracks: 8 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.971 INFO Subtitle tracks: 9 - hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.972 INFO Subtitle tracks: 10 - eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.973 INFO Subtitle tracks: 11 - eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.973 INFO Subtitle tracks: 12 - eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.974 INFO Subtitle tracks: 13 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.975 INFO Subtitle tracks: 13 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.976 INFO Subtitle tracks: 15 -  (embedded), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.977 INFO Subtitle tracks: 16 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.985 INFO Subtitle tracks: 17 -  (embedded), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:22.986 INFO Subtitle tracks: 18 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:22.987 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:22.988 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:23.059 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:47:23.078 INFO Read 7: view 2, position 786432 (chunk 0), 262144 bytes
+10:47:23.080 INFO Opened: video HEVC 1920x1080 23.976fps, audio AAC 6ch [en]
+10:47:23.081 INFO Video range: Sdr (decoder subtype HEVC, transfer function 5)
+10:47:23.941 INFO Display mode set: 1920x1080@23.976 None
+10:47:23.943 INFO Prebuffered 64 MB (194.7 s of video) in 1 ms
+10:47:23.947 INFO Resumed from 00:00:42
+10:47:24.051 INFO Read 8: view 2, position 14417920 (chunk 3), 262144 bytes
+10:47:24.051 INFO Read 9: view 2, position 14680064 (chunk 3), 262144 bytes
+10:47:24.052 INFO Read 10: view 2, position 14942208 (chunk 3), 262144 bytes
+10:47:24.052 INFO Read 11: view 2, position 15204352 (chunk 3), 262144 bytes
+10:47:24.052 INFO Read 12: view 2, position 15466496 (chunk 3), 262144 bytes
+10:47:24.053 INFO Read 13: view 2, position 15728640 (chunk 3), 262144 bytes
+10:47:24.103 INFO Read 14: view 2, position 15990784 (chunk 3), 262144 bytes
+10:47:24.103 INFO Playback buffering started: 00:00:42 / 00:21:34, state Playing, downloaded 100.0%, memory 1322 / 3328 MB
+10:47:24.104 INFO Read 15: view 2, position 16252928 (chunk 3), 262144 bytes
+10:47:24.104 INFO Playback buffering ended: 00:00:42 / 00:21:34, state Playing, downloaded 100.0%, memory 1322 / 3328 MB
+10:47:24.156 INFO Restart seek after play: +10 s from 00:00:42 (waited 206 ms for playback)
+10:47:24.158 INFO Read 16: view 2, position 16515072 (chunk 3), 262144 bytes
+10:47:24.162 INFO Read 17: view 2, position 16777216 (chunk 4), 262144 bytes
+10:47:24.163 INFO Playback buffering started: 00:00:52 / 00:21:34, state Buffering, downloaded 100.0%, memory 1334 / 3328 MB
+10:47:24.163 INFO Read 18: view 2, position 17039360 (chunk 4), 262144 bytes
+10:47:24.163 INFO Read 19: view 2, position 17301504 (chunk 4), 262144 bytes
+10:47:24.164 INFO Read 20: view 2, position 17563648 (chunk 4), 262144 bytes
+10:47:24.165 INFO Read 21: view 2, position 17825792 (chunk 4), 262144 bytes
+10:47:24.165 INFO Read 22: view 2, position 18087936 (chunk 4), 262144 bytes
+10:47:24.166 INFO Read 23: view 2, position 18350080 (chunk 4), 262144 bytes
+10:47:24.167 INFO Read 24: view 2, position 18612224 (chunk 4), 262144 bytes
+10:47:24.167 INFO Read 25: view 2, position 18874368 (chunk 4), 262144 bytes
+10:47:24.169 INFO Read 26: view 2, position 19136512 (chunk 4), 262144 bytes
+10:47:24.170 INFO Read 27: view 2, position 19398656 (chunk 4), 262144 bytes
+10:47:24.171 INFO Read 28: view 2, position 19660800 (chunk 4), 262144 bytes
+10:47:24.172 INFO Read 29: view 2, position 19922944 (chunk 4), 262144 bytes
+10:47:24.179 INFO Read 30: view 2, position 20185088 (chunk 4), 262144 bytes
+10:47:24.477 INFO Playback buffering ended: 00:00:52 / 00:21:34, state Playing, downloaded 100.0%, memory 1423 / 3328 MB
+10:47:24.782 INFO Read 31: view 2, position 20447232 (chunk 4), 262144 bytes
+10:47:25.486 INFO Read 32: view 2, position 14417920 (chunk 3), 262144 bytes
+10:47:25.490 INFO Read 33: view 2, position 14680064 (chunk 3), 262144 bytes
+10:47:25.491 INFO Playback buffering started: 00:00:42 / 00:21:34, state Buffering, downloaded 100.0%, memory 1411 / 3328 MB
+10:47:25.491 INFO Read 34: view 2, position 14942208 (chunk 3), 262144 bytes
+10:47:25.492 INFO Read 35: view 2, position 15204352 (chunk 3), 262144 bytes
+10:47:25.493 INFO Read 36: view 2, position 15466496 (chunk 3), 262144 bytes
+10:47:25.494 INFO Read 37: view 2, position 15728640 (chunk 3), 262144 bytes
+10:47:25.578 INFO Read 38: view 2, position 15990784 (chunk 3), 262144 bytes
+10:47:25.579 INFO Read 39: view 2, position 16252928 (chunk 3), 262144 bytes
+10:47:25.580 INFO Playback buffering ended: 00:00:42 / 00:21:34, state Playing, downloaded 100.0%, memory 1421 / 3328 MB
+10:47:25.580 INFO Restart seek after play done in 1424 ms
+10:47:25.863 WARN No response after 17 s: POST api.strem.io/api/events
+10:47:26.285 INFO Read 40: view 2, position 16515072 (chunk 3), 262144 bytes
+10:47:28.676 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:47:28.680 INFO Subtitle menu: 20 track(s), highlighting row 0
+10:47:28.742 INFO SRC xinput btn=X pads=1
+10:47:29.516 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:47:29.575 INFO SRC xinput btn=Up pads=1
+10:47:30.084 INFO SRC xinput btn=Up pads=1
+10:47:30.367 INFO SRC xinput btn=Up pads=1
+10:47:30.468 INFO ACCEL key vk=0xCB sc=0 ext=False
+10:47:30.534 INFO SRC xinput btn=Up pads=1
+10:47:30.701 INFO SRC xinput btn=Up pads=1
+10:47:30.874 INFO SRC xinput btn=Up pads=1
+10:47:31.348 INFO ACCEL key vk=0xC3 sc=0 ext=False
+10:47:31.348 INFO Subtitles: spa (OpenSubtitles v3)
+10:47:31.371 INFO SRC xinput btn=A pads=1
+10:47:34.039 INFO Pace: 00:00:51 +5.0s media / 5.0s wall, download 707 Mbps, buffer 409 MB (1246 s), waited reads 1 (100.0%), Playing
+10:47:34.039 INFO Views: v2 52 reads 12 MB at 0-19 MB, waits 1 (496 ms total, max 496); in flight max 1, overlapped 0, behind a pending read 0
+10:47:34.039 INFO File 0.42 GB, average bitrate 2.8 Mbps
+10:47:35.300 INFO ACCEL key vk=0xC5 sc=0 ext=False
+10:47:35.303 INFO Subtitle menu: 20 track(s), highlighting row 18
+10:47:35.339 INFO SRC xinput btn=X pads=1
+10:47:35.957 WARN No response after 18 s: POST api.strem.io/api/datastoreGet
+10:47:35.957 WARN No response after 18 s: GET torrentio.strem.fun/<91 chars>/stream/series/tt1266020%3A6%3A3.json
+10:47:35.957 WARN No response after 18 s: GET v3-cinemeta.strem.io/meta/series/tt1266020.json
+10:47:35.957 WARN No response after 18 s: OPTIONS likes.stremio.com/api/get_status?<query>
+10:47:35.957 WARN No response after 18 s: GET 127.0.0.1/local-addon/stream/series/tt1266020%3A6%3A3.json
+10:47:36.444 INFO ACCEL key vk=0xCC sc=0 ext=False
+10:47:36.463 INFO SRC xinput btn=Down pads=1
+10:47:36.707 INFO SRC xinput btn=Down pads=1
+10:47:36.958 INFO SRC xinput btn=Down pads=1
+10:47:37.548 INFO ACCEL key vk=0xCE sc=0 ext=False
+10:47:37.550 INFO Subtitle re-time: downloading with delay 1s / rate 0.9x
+10:47:37.590 INFO SRC xinput btn=Right pads=1
+10:47:37.839 INFO Subtitle re-time: applied delay 1s / rate 0.9x to 20 subtitle(s)
+10:47:37.907 INFO Request XmlHttpRequest POST api.strem.io/api/events
+10:47:38.763 INFO Subtitle tracks: 1 - slv (OpenSubtitles v3)
+10:47:38.766 INFO Subtitle tracks: 3 - pob (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:38.766 INFO Subtitle tracks: 4 -  (embedded), pob (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:38.767 INFO Subtitle tracks: 4 - ita (OpenSubtitles v3), pob (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:38.768 INFO Subtitle tracks: 6 - ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:38.769 INFO Subtitle tracks: 6 - ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3)
+10:47:38.770 INFO Subtitle tracks: 8 - ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.771 INFO Subtitle tracks: 8 - ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.772 INFO Subtitle tracks: 10 - ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.773 INFO Subtitle tracks: 11 - eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.773 INFO Subtitle tracks: 11 - eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.775 INFO Subtitle tracks: 12 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.858 INFO Subtitle tracks: 13 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.860 INFO Subtitle tracks: 14 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.861 INFO Subtitle tracks: 15 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3), spa (OpenSubtitles v3), tur (OpenSubtitles v3)
+10:47:38.864 INFO Subtitle tracks: 17 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:38.865 INFO Subtitle tracks: 18 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), por (OpenSubtitles v3), slv (OpenSubtitles v3)
+10:47:38.866 INFO Subtitle tracks: 19 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:47:38.866 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:47:38.867 INFO Subtitle tracks: 20 - eng (OpenSubtitles v3), eng (OpenSubtitles v3), eng (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), hrv (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), ita (OpenSubtitles v3), nld (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pob (OpenSubtitles v3), pol (OpenSubtitles v3), por (OpenSubtitles v3)
+10:47:38.903 INFO Opened: video HEVC 1920x1080 23.976fps, audio AAC 6ch [en]
+10:47:38.903 INFO Video range: Sdr (decoder subtype HEVC, transfer function 5)
+10:47:38.917 INFO Playback buffering started: 00:00:54 / 00:21:34, state Buffering, downloaded -100.0%, memory 1284 / 3328 MB
+10:47:38.922 INFO Display mode set: 1920x1080@23.976 None
+10:47:38.923 INFO Prebuffered 409 MB (1246.1 s of video) in 0 ms
+10:47:38.923 INFO Resumed from 00:00:51
+10:47:39.598 INFO Playback buffering ended: 00:00:51 / 00:21:34, state Buffering, downloaded 4.6%, memory 1384 / 3328 MB
+10:47:39.598 INFO Playback buffering started: 00:00:51 / 00:21:34, state Buffering, downloaded 4.6%, memory 1384 / 3328 MB
+10:47:40.489 INFO Restart seek after play: +10 s from 00:00:51 (waited 1563 ms for playback)
+10:47:40.491 INFO Playback buffering ended: 00:01:01 / 00:21:34, state Playing, downloaded 4.7%, memory 1391 / 3328 MB
+10:47:40.498 INFO Playback buffering started: 00:01:01 / 00:21:34, state Buffering, downloaded 4.7%, memory 1391 / 3328 MB
+10:47:41.141 INFO Playback buffering ended: 00:01:01 / 00:21:34, state Playing, downloaded 5.2%, memory 1393 / 3328 MB
+10:47:42.146 INFO Playback buffering started: 00:00:51 / 00:21:34, state Buffering, downloaded -100.0%, memory 1396 / 3328 MB
+10:47:42.647 INFO Playback buffering ended: 00:00:51 / 00:21:34, state Playing, downloaded 4.3%, memory 1398 / 3328 MB
+10:47:42.757 INFO Restart seek after play done in 2266 ms
+10:47:45.116 INFO ACCEL key vk=0xC4 sc=0 ext=False
+10:47:45.116 INFO Subtitle menu closed
+10:47:47.828 INFO ACCEL key vk=0xC4 sc=0 ext=False
+10:47:47.829 INFO Playback stopped by user: 00:00:56 / 00:21:34, state Playing, downloaded 5.8%, memory 1399 / 3328 MB
+10:47:47.995 INFO Playback stopped by user
+10:47:48.714 INFO View 2 disposed at 20 MB
+10:47:48.715 INFO Request XmlHttpRequest POST api.strem.io/api/addonCollectionGet
+10:47:48.716 INFO Request XmlHttpRequest POST api.strem.io/api/getUser
+10:47:48.716 INFO Request XmlHttpRequest POST api.strem.io/api/datastoreMeta
+10:47:48.725 WARN web: INPUT pointermove | target=DIV.content-qTAjU
+10:47:48.726 WARN web: INPUT mousemove | target=DIV.content-qTAjU
+10:47:55.338 INFO Lifecycle: suspending
+10:47:55.342 INFO Lifecycle: entered background
